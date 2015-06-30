@@ -13,6 +13,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	var windowControllers: [MainWindowController] = []
 	
+	// MARK: -  NSApplicationDelegate
+	
+	func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+		
+		return true
+		
+	}
+	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
 		
 		addWindowController()

@@ -13,6 +13,23 @@
 		D03DE70C1B4253F800E5C088 /* MatrixMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */; };
 		D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE7151B42549800E5C088 /* MainWindowController.swift */; };
 		D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7161B42549800E5C088 /* MainWindowController.xib */; };
+		D03DE7491B425B0800E5C088 /* led_off.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7451B425B0800E5C088 /* led_off.png */; };
+		D03DE74A1B425B0800E5C088 /* led_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7461B425B0800E5C088 /* led_green.png */; };
+		D03DE74B1B425B0800E5C088 /* led_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7471B425B0800E5C088 /* led_orange.png */; };
+		D03DE74C1B425B0800E5C088 /* led_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7481B425B0800E5C088 /* led_red.png */; };
+		D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */; };
+		D0A3DD7B1B426FC4009BE376 /* Doc1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD7A1B426FC4009BE376 /* Doc1.png */; };
+		D0A3DD831B427827009BE376 /* page.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD821B427827009BE376 /* page.png */; };
+		D0A3DD851B4278BA009BE376 /* new-s2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD841B4278BA009BE376 /* new-s2.png */; };
+		D0A3DD871B427913009BE376 /* reset-s2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD861B427913009BE376 /* reset-s2.png */; };
+		D0A3DD891B427AC2009BE376 /* liveview-s2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD881B427AC2009BE376 /* liveview-s2.png */; };
+		D0A3DD8E1B427BB7009BE376 /* led_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD8A1B427BB7009BE376 /* led_blue.png */; };
+		D0A3DD8F1B427BB7009BE376 /* led_green2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD8B1B427BB7009BE376 /* led_green2.png */; };
+		D0A3DD901B427BB7009BE376 /* led_mauve.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD8C1B427BB7009BE376 /* led_mauve.png */; };
+		D0A3DD911B427BB7009BE376 /* led_yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD8D1B427BB7009BE376 /* led_yellow.png */; };
+		D0A3DD931B42FBE6009BE376 /* new-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD921B42FBE6009BE376 /* new-s1.png */; };
+		D0A3DD951B42FC88009BE376 /* reset-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD941B42FC88009BE376 /* reset-s1.png */; };
+		D0A3DD971B42FCE3009BE376 /* liveview-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD961B42FCE3009BE376 /* liveview-s1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +53,23 @@
 		D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixMakerTests.swift; sourceTree = "<group>"; };
 		D03DE7151B42549800E5C088 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		D03DE7161B42549800E5C088 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
+		D03DE7451B425B0800E5C088 /* led_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_off.png; sourceTree = "<group>"; };
+		D03DE7461B425B0800E5C088 /* led_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_green.png; sourceTree = "<group>"; };
+		D03DE7471B425B0800E5C088 /* led_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_orange.png; sourceTree = "<group>"; };
+		D03DE7481B425B0800E5C088 /* led_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_red.png; sourceTree = "<group>"; };
+		D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDMatrixView.swift; sourceTree = "<group>"; };
+		D0A3DD7A1B426FC4009BE376 /* Doc1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Doc1.png; sourceTree = "<group>"; };
+		D0A3DD821B427827009BE376 /* page.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = page.png; sourceTree = "<group>"; };
+		D0A3DD841B4278BA009BE376 /* new-s2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new-s2.png"; sourceTree = "<group>"; };
+		D0A3DD861B427913009BE376 /* reset-s2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reset-s2.png"; sourceTree = "<group>"; };
+		D0A3DD881B427AC2009BE376 /* liveview-s2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liveview-s2.png"; sourceTree = "<group>"; };
+		D0A3DD8A1B427BB7009BE376 /* led_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_blue.png; sourceTree = "<group>"; };
+		D0A3DD8B1B427BB7009BE376 /* led_green2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_green2.png; sourceTree = "<group>"; };
+		D0A3DD8C1B427BB7009BE376 /* led_mauve.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_mauve.png; sourceTree = "<group>"; };
+		D0A3DD8D1B427BB7009BE376 /* led_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_yellow.png; sourceTree = "<group>"; };
+		D0A3DD921B42FBE6009BE376 /* new-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new-s1.png"; sourceTree = "<group>"; };
+		D0A3DD941B42FC88009BE376 /* reset-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reset-s1.png"; sourceTree = "<group>"; };
+		D0A3DD961B42FCE3009BE376 /* liveview-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liveview-s1.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,12 +111,9 @@
 		D03DE6F71B4253F700E5C088 /* MatrixMaker */ = {
 			isa = PBXGroup;
 			children = (
-				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
+				D03DE7431B42597D00E5C088 /* GUI */,
 				D03DE6FC1B4253F700E5C088 /* Images.xcassets */,
-				D03DE6FE1B4253F700E5C088 /* MainMenu.xib */,
 				D03DE6F81B4253F700E5C088 /* Supporting Files */,
-				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
-				D03DE7161B42549800E5C088 /* MainWindowController.xib */,
 			);
 			path = MatrixMaker;
 			sourceTree = "<group>";
@@ -90,6 +121,7 @@
 		D03DE6F81B4253F700E5C088 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D03DE7441B42599A00E5C088 /* Art */,
 				D03DE6F91B4253F700E5C088 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -110,6 +142,41 @@
 				D03DE70A1B4253F800E5C088 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D03DE7431B42597D00E5C088 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
+				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
+				D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */,
+				D03DE6FE1B4253F700E5C088 /* MainMenu.xib */,
+				D03DE7161B42549800E5C088 /* MainWindowController.xib */,
+			);
+			name = GUI;
+			sourceTree = "<group>";
+		};
+		D03DE7441B42599A00E5C088 /* Art */ = {
+			isa = PBXGroup;
+			children = (
+				D0A3DD961B42FCE3009BE376 /* liveview-s1.png */,
+				D0A3DD941B42FC88009BE376 /* reset-s1.png */,
+				D0A3DD921B42FBE6009BE376 /* new-s1.png */,
+				D0A3DD881B427AC2009BE376 /* liveview-s2.png */,
+				D0A3DD861B427913009BE376 /* reset-s2.png */,
+				D0A3DD841B4278BA009BE376 /* new-s2.png */,
+				D0A3DD821B427827009BE376 /* page.png */,
+				D0A3DD7A1B426FC4009BE376 /* Doc1.png */,
+				D03DE7451B425B0800E5C088 /* led_off.png */,
+				D03DE7461B425B0800E5C088 /* led_green.png */,
+				D03DE7471B425B0800E5C088 /* led_orange.png */,
+				D03DE7481B425B0800E5C088 /* led_red.png */,
+				D0A3DD8A1B427BB7009BE376 /* led_blue.png */,
+				D0A3DD8B1B427BB7009BE376 /* led_green2.png */,
+				D0A3DD8C1B427BB7009BE376 /* led_mauve.png */,
+				D0A3DD8D1B427BB7009BE376 /* led_yellow.png */,
+			);
+			name = Art;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,9 +259,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0A3DD7B1B426FC4009BE376 /* Doc1.png in Resources */,
 				D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */,
+				D0A3DD871B427913009BE376 /* reset-s2.png in Resources */,
+				D0A3DD911B427BB7009BE376 /* led_yellow.png in Resources */,
+				D03DE74B1B425B0800E5C088 /* led_orange.png in Resources */,
+				D0A3DD8E1B427BB7009BE376 /* led_blue.png in Resources */,
+				D03DE74C1B425B0800E5C088 /* led_red.png in Resources */,
 				D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */,
+				D0A3DD971B42FCE3009BE376 /* liveview-s1.png in Resources */,
+				D0A3DD951B42FC88009BE376 /* reset-s1.png in Resources */,
+				D0A3DD891B427AC2009BE376 /* liveview-s2.png in Resources */,
+				D03DE7491B425B0800E5C088 /* led_off.png in Resources */,
+				D0A3DD831B427827009BE376 /* page.png in Resources */,
+				D03DE74A1B425B0800E5C088 /* led_green.png in Resources */,
 				D03DE7001B4253F700E5C088 /* MainMenu.xib in Resources */,
+				D0A3DD851B4278BA009BE376 /* new-s2.png in Resources */,
+				D0A3DD8F1B427BB7009BE376 /* led_green2.png in Resources */,
+				D0A3DD931B42FBE6009BE376 /* new-s1.png in Resources */,
+				D0A3DD901B427BB7009BE376 /* led_mauve.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */,
+				D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */,
 				D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +488,7 @@
 				D03DE7111B4253F800E5C088 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D03DE7121B4253F800E5C088 /* Build configuration list for PBXNativeTarget "MatrixMakerTests" */ = {
 			isa = XCConfigurationList;
@@ -412,6 +497,7 @@
 				D03DE7141B4253F800E5C088 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
