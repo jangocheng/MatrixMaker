@@ -10,18 +10,37 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-	@IBOutlet weak var window: NSWindow!
-
-
+	
+	var windowControllers: [MainWindowController] = []
+	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
-		// Insert code here to initialize your application
+		
+		addWindowController()
+		
 	}
-
+	
 	func applicationWillTerminate(aNotification: NSNotification) {
 		// Insert code here to tear down your application
 	}
-
-
+	
+	// MARK: - Helpers
+	
+	func addWindowController() {
+		let windowController = MainWindowController()
+		windowController.showWindow(self)
+		windowControllers.append(windowController)
+	}
+	
+	// MARK - Actions
+	@IBAction func displayNewWindow(send: NSMenuItem) {
+		
+		addWindowController()
+		
+	}
+	
+	
+	
+	
+	
 }
 

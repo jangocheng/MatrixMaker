@@ -11,6 +11,8 @@
 		D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FC1B4253F700E5C088 /* Images.xcassets */; };
 		D03DE7001B4253F700E5C088 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FE1B4253F700E5C088 /* MainMenu.xib */; };
 		D03DE70C1B4253F800E5C088 /* MatrixMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */; };
+		D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE7151B42549800E5C088 /* MainWindowController.swift */; };
+		D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7161B42549800E5C088 /* MainWindowController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +34,8 @@
 		D03DE7051B4253F800E5C088 /* MatrixMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MatrixMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D03DE70A1B4253F800E5C088 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixMakerTests.swift; sourceTree = "<group>"; };
+		D03DE7151B42549800E5C088 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
+		D03DE7161B42549800E5C088 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 				D03DE6FC1B4253F700E5C088 /* Images.xcassets */,
 				D03DE6FE1B4253F700E5C088 /* MainMenu.xib */,
 				D03DE6F81B4253F700E5C088 /* Supporting Files */,
+				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
+				D03DE7161B42549800E5C088 /* MainWindowController.xib */,
 			);
 			path = MatrixMaker;
 			sourceTree = "<group>";
@@ -187,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */,
+				D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */,
 				D03DE7001B4253F700E5C088 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */,
 				D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
