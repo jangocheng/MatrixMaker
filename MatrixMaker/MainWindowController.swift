@@ -26,7 +26,7 @@ class MainWindowController:	NSWindowController,
 	
 	var isPortOpen: Bool	= false
 	var ledStatusArray		= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
-	var dataToSend:			NSMutableData!
+	var dataToSend			= NSMutableData()
 	
 	let serialPortManager	= ORSSerialPortManager.sharedSerialPortManager()
 	let availableBaudRates	= [   300,  1200,  2400,  4800,   9600,  14400,
@@ -36,14 +36,17 @@ class MainWindowController:	NSWindowController,
 		didSet {
 			println("Setting serialPort")
 			oldValue?.close()
-			oldValue?.delegate = nil
-			serialPort?.delegate = self
+			oldValue?.delegate		= nil
+			serialPort?.delegate	= self
 		}
 	}
-	
-	
+		
 	override var windowNibName: String {
 		return "MainWindowController"
+	}
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 
     override func windowDidLoad() {
@@ -55,8 +58,8 @@ class MainWindowController:	NSWindowController,
 									(NSImage(named: "led_green.png")!),
 									(NSImage(named: "led_orange.png")!)]
 
-		myMatrixView!.delegate				= self
-		myMatrixView.needsDisplay			= true
+		myMatrixView!.delegate		= self
+		myMatrixView.needsDisplay	= true
 		
 		let drawerSize = NSMakeSize(CGFloat(225), CGFloat(500))
 		
@@ -72,6 +75,8 @@ class MainWindowController:	NSWindowController,
 		}
 		
 		portBaudRate.selectItemWithTitle("115200")
+		
+//		dataToSend = NSMutableData()
 		
 		// set up to receive ORSSerialPorts notifications
 		let notificationCenter = NSNotificationCenter.defaultCenter()

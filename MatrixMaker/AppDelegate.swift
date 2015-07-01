@@ -16,15 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	// MARK: -  NSApplicationDelegate
 	
 	func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication)-> Bool {
-		
 		return true
-		
 	}
 	
 	func applicationDidFinishLaunching(aNotification: NSNotification) {
-		
 		addWindowController()
-		
 	}
 	
 	func applicationWillTerminate(aNotification: NSNotification) {
@@ -44,9 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	// MARK - Actions
 	
 	@IBAction func displayNewWindow(send: NSMenuItem) {
-		
 		addWindowController()
-		
 	}
 	
 	

@@ -9,18 +9,13 @@
 /* Begin PBXBuildFile section */
 		D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */; };
 		D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FC1B4253F700E5C088 /* Images.xcassets */; };
-		D03DE7001B4253F700E5C088 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FE1B4253F700E5C088 /* MainMenu.xib */; };
 		D03DE70C1B4253F800E5C088 /* MatrixMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */; };
 		D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE7151B42549800E5C088 /* MainWindowController.swift */; };
-		D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7161B42549800E5C088 /* MainWindowController.xib */; };
-		D03DE7491B425B0800E5C088 /* led_off.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7451B425B0800E5C088 /* led_off.png */; };
-		D03DE74A1B425B0800E5C088 /* led_green.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7461B425B0800E5C088 /* led_green.png */; };
-		D03DE74B1B425B0800E5C088 /* led_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7471B425B0800E5C088 /* led_orange.png */; };
-		D03DE74C1B425B0800E5C088 /* led_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7481B425B0800E5C088 /* led_red.png */; };
+		D03DE7181B42549800E5C088 /* GUI in Resources */ = {isa = PBXBuildFile; fileRef = D03DE7161B42549800E5C088 /* GUI */; };
 		D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */; };
-		D0A3DD931B42FBE6009BE376 /* new-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD921B42FBE6009BE376 /* new-s1.png */; };
-		D0A3DD951B42FC88009BE376 /* reset-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD941B42FC88009BE376 /* reset-s1.png */; };
-		D0A3DD971B42FCE3009BE376 /* liveview-s1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A3DD961B42FCE3009BE376 /* liveview-s1.png */; };
+		D07D9EBF1B43891F00548C61 /* ORSSerial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D07D9EBE1B4385F800548C61 /* ORSSerial.framework */; };
+		D0A459C41B44B081005FC435 /* Supporting Files in Resources */ = {isa = PBXBuildFile; fileRef = D0A459C31B44B081005FC435 /* Supporting Files */; };
+		D0BFE5E61B445D66001CBF5B /* Images in Resources */ = {isa = PBXBuildFile; fileRef = D0BFE5E51B445D66001CBF5B /* Images */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,24 +50,17 @@
 
 /* Begin PBXFileReference section */
 		D03DE6F51B4253F700E5C088 /* MatrixMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MatrixMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D03DE6F91B4253F700E5C088 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D03DE6FC1B4253F700E5C088 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		D03DE6FF1B4253F700E5C088 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D03DE7051B4253F800E5C088 /* MatrixMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MatrixMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D03DE70A1B4253F800E5C088 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixMakerTests.swift; sourceTree = "<group>"; };
 		D03DE7151B42549800E5C088 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
-		D03DE7161B42549800E5C088 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
-		D03DE7451B425B0800E5C088 /* led_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_off.png; sourceTree = "<group>"; };
-		D03DE7461B425B0800E5C088 /* led_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_green.png; sourceTree = "<group>"; };
-		D03DE7471B425B0800E5C088 /* led_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_orange.png; sourceTree = "<group>"; };
-		D03DE7481B425B0800E5C088 /* led_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = led_red.png; sourceTree = "<group>"; };
+		D03DE7161B42549800E5C088 /* GUI */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = GUI; sourceTree = "<group>"; };
 		D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDMatrixView.swift; sourceTree = "<group>"; };
 		D07D9EB91B4385F800548C61 /* ORSSerialPort.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORSSerialPort.xcodeproj; path = "Frameworks/ORSSerialPort/Framework Project/ORSSerialPort.xcodeproj"; sourceTree = SOURCE_ROOT; };
-		D0A3DD921B42FBE6009BE376 /* new-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new-s1.png"; sourceTree = "<group>"; };
-		D0A3DD941B42FC88009BE376 /* reset-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reset-s1.png"; sourceTree = "<group>"; };
-		D0A3DD961B42FCE3009BE376 /* liveview-s1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "liveview-s1.png"; sourceTree = "<group>"; };
+		D0A459C31B44B081005FC435 /* Supporting Files */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Supporting Files"; sourceTree = "<group>"; };
+		D0BFE5E51B445D66001CBF5B /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D07D9EBF1B43891F00548C61 /* ORSSerial.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +85,7 @@
 		D03DE6EC1B4253F700E5C088 = {
 			isa = PBXGroup;
 			children = (
+				D07D9EB91B4385F800548C61 /* ORSSerialPort.xcodeproj */,
 				D03DE6F71B4253F700E5C088 /* MatrixMaker */,
 				D03DE7081B4253F800E5C088 /* MatrixMakerTests */,
 				D03DE6F61B4253F700E5C088 /* Products */,
@@ -114,21 +104,15 @@
 		D03DE6F71B4253F700E5C088 /* MatrixMaker */ = {
 			isa = PBXGroup;
 			children = (
-				D03DE7431B42597D00E5C088 /* GUI */,
+				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
+				D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */,
+				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
+				D03DE7161B42549800E5C088 /* GUI */,
 				D03DE6FC1B4253F700E5C088 /* Images.xcassets */,
-				D03DE6F81B4253F700E5C088 /* Supporting Files */,
+				D0BFE5E51B445D66001CBF5B /* Images */,
+				D0A459C31B44B081005FC435 /* Supporting Files */,
 			);
 			path = MatrixMaker;
-			sourceTree = "<group>";
-		};
-		D03DE6F81B4253F700E5C088 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				D07D9EB91B4385F800548C61 /* ORSSerialPort.xcodeproj */,
-				D03DE7441B42599A00E5C088 /* Art */,
-				D03DE6F91B4253F700E5C088 /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		D03DE7081B4253F800E5C088 /* MatrixMakerTests */ = {
@@ -146,32 +130,6 @@
 				D03DE70A1B4253F800E5C088 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		D03DE7431B42597D00E5C088 /* GUI */ = {
-			isa = PBXGroup;
-			children = (
-				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
-				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
-				D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */,
-				D03DE6FE1B4253F700E5C088 /* MainMenu.xib */,
-				D03DE7161B42549800E5C088 /* MainWindowController.xib */,
-			);
-			name = GUI;
-			sourceTree = "<group>";
-		};
-		D03DE7441B42599A00E5C088 /* Art */ = {
-			isa = PBXGroup;
-			children = (
-				D0A3DD961B42FCE3009BE376 /* liveview-s1.png */,
-				D0A3DD941B42FC88009BE376 /* reset-s1.png */,
-				D0A3DD921B42FBE6009BE376 /* new-s1.png */,
-				D03DE7451B425B0800E5C088 /* led_off.png */,
-				D03DE7461B425B0800E5C088 /* led_green.png */,
-				D03DE7471B425B0800E5C088 /* led_orange.png */,
-				D03DE7481B425B0800E5C088 /* led_red.png */,
-			);
-			name = Art;
 			sourceTree = "<group>";
 		};
 		D07D9EBA1B4385F800548C61 /* Products */ = {
@@ -279,16 +237,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0BFE5E61B445D66001CBF5B /* Images in Resources */,
 				D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */,
-				D03DE74B1B425B0800E5C088 /* led_orange.png in Resources */,
-				D03DE74C1B425B0800E5C088 /* led_red.png in Resources */,
-				D03DE7181B42549800E5C088 /* MainWindowController.xib in Resources */,
-				D0A3DD971B42FCE3009BE376 /* liveview-s1.png in Resources */,
-				D0A3DD951B42FC88009BE376 /* reset-s1.png in Resources */,
-				D03DE7491B425B0800E5C088 /* led_off.png in Resources */,
-				D03DE74A1B425B0800E5C088 /* led_green.png in Resources */,
-				D03DE7001B4253F700E5C088 /* MainMenu.xib in Resources */,
-				D0A3DD931B42FBE6009BE376 /* new-s1.png in Resources */,
+				D0A459C41B44B081005FC435 /* Supporting Files in Resources */,
+				D03DE7181B42549800E5C088 /* GUI in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,17 +281,6 @@
 			targetProxy = D03DE7061B4253F800E5C088 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		D03DE6FE1B4253F700E5C088 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D03DE6FF1B4253F700E5C088 /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D03DE70D1B4253F800E5C088 /* Debug */ = {
@@ -429,6 +370,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MatrixMaker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -440,6 +382,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = MatrixMaker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

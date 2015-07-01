@@ -21,8 +21,8 @@ class LEDMatrixView: NSView {
 	
 	var imageArray: [NSImage] = []
 
-	let columnCount		= 8
-	let rowCount		= 8
+	var columnCount		= 8
+	var rowCount		= 8
 	
 	var curXPos			= 0
 	var curYPos			= 0
