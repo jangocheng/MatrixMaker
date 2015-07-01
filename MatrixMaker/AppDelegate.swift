@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	// MARK: -  NSApplicationDelegate
 	
-	func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+	func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication)-> Bool {
 		
 		return true
 		
@@ -34,12 +34,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	// MARK: - Helpers
 	
 	func addWindowController() {
+		
 		let windowController = MainWindowController()
 		windowController.showWindow(self)
 		windowControllers.append(windowController)
+		
 	}
 	
 	// MARK - Actions
+	
 	@IBAction func displayNewWindow(send: NSMenuItem) {
 		
 		addWindowController()

@@ -13,7 +13,6 @@ import Cocoa
 	func nextValueForImageAtLogicalX(logicalX: Int, logicalY: Int)
 }
 
-@IBDesignable
 class LEDMatrixView: NSView {
 	
 //	let path = "/Library/Application Support/Apple/iChat Icons/Flags/"
