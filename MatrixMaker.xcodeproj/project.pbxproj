@@ -15,6 +15,7 @@
 		D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */; };
 		D07D9EBF1B43891F00548C61 /* ORSSerial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D07D9EBE1B4385F800548C61 /* ORSSerial.framework */; };
 		D0A459C41B44B081005FC435 /* Supporting Files in Resources */ = {isa = PBXBuildFile; fileRef = D0A459C31B44B081005FC435 /* Supporting Files */; };
+		D0A459C91B44C4FE005FC435 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A459C81B44C4FE005FC435 /* Extensions.swift */; };
 		D0BFE5E61B445D66001CBF5B /* Images in Resources */ = {isa = PBXBuildFile; fileRef = D0BFE5E51B445D66001CBF5B /* Images */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +61,7 @@
 		D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDMatrixView.swift; sourceTree = "<group>"; };
 		D07D9EB91B4385F800548C61 /* ORSSerialPort.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORSSerialPort.xcodeproj; path = "Frameworks/ORSSerialPort/Framework Project/ORSSerialPort.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		D0A459C31B44B081005FC435 /* Supporting Files */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Supporting Files"; sourceTree = "<group>"; };
+		D0A459C81B44C4FE005FC435 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D0BFE5E51B445D66001CBF5B /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,6 +109,7 @@
 				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
 				D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */,
 				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
+				D0A459C81B44C4FE005FC435 /* Extensions.swift */,
 				D03DE7161B42549800E5C088 /* GUI */,
 				D03DE6FC1B4253F700E5C088 /* Images.xcassets */,
 				D0BFE5E51B445D66001CBF5B /* Images */,
@@ -261,6 +264,7 @@
 				D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */,
 				D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */,
 				D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */,
+				D0A459C91B44C4FE005FC435 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,7 +372,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = MatrixMaker/Info.plist;
+				INFOPLIST_FILE = "MatrixMaker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -380,7 +384,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = MatrixMaker/Info.plist;
+				INFOPLIST_FILE = "MatrixMaker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";

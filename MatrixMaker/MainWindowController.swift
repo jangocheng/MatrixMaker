@@ -202,6 +202,20 @@ class MainWindowController:	NSWindowController,
 	
 	func valueForImageAtLogicalX(logicalX: Int, logicalY: Int) -> Int {
 		
+		// if connected to µcontroller, update hardware
+		if serialPort?.open == true {
+			
+//			println("serial data for (\(logicalX),\(logicalY)): \(ledStatusArray[logicalX][logicalY])")
+			dataToSend.appendByte(UInt8(logicalX))
+			println(NSString(format:"0x%02X", logicalX))
+			dataToSend.appendByte(UInt8(logicalY))
+			println(NSString(format:"0x%02X", logicalY))
+			dataToSend.appendByte(UInt8(ledStatusArray[logicalX][logicalY]))
+			println(NSString(format:"0x%02X", ledStatusArray[logicalX][logicalY]))
+			serialPort?.sendData(dataToSend)
+			dataToSend.length = 0
+		}
+		
 		return ledStatusArray[logicalX][logicalY]
 		
 	}
@@ -294,7 +308,7 @@ class MainWindowController:	NSWindowController,
 	func serialPort(serialPort: ORSSerialPort, didReceiveData data: NSData) {
 
 		if let string = NSString(data: data, encoding: NSUTF8StringEncoding) {
-			println(string)
+			println("rx: \(string)")
 		}
 		
 	}

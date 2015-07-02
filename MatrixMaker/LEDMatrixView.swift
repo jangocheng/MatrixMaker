@@ -38,11 +38,28 @@ class LEDMatrixView: NSView {
 		let backgroundColor = NSColor.darkGrayColor()
 		backgroundColor.set()
 		NSBezierPath.fillRect(bounds)
+		
+		println("drawRect: \(dirtyRect)")
+		
+		let xStart	= Int(dirtyRect.origin.x / CGFloat(currentSize))
+		let xEnd	= Int(CGFloat(xStart) + (dirtyRect.size.width / CGFloat(currentSize)))
 
-		for x in 0..<columnCount {
-			for y in 0..<rowCount {
+		let yStart	= Int(dirtyRect.origin.y / CGFloat(currentSize))
+		let yEnd	= Int(CGFloat(yStart) + (dirtyRect.size.height / CGFloat(currentSize)))
+
+		
+		println(" x to x: \(xStart) to \(xEnd)")
+		println(" y to y: \(yStart) to \(yEnd)")
+
+		
+//		for x in 0..<columnCount {
+//			for y in 0..<rowCount {
+		for x in xStart..<xEnd {
+			for y in yStart..<yEnd {
 				let frame = frameForImageAtLogicalX(x, logicalY: y)
+//				println("frame: \(frame)")
 				if !imageArray.isEmpty{
+					println("calling delegate.valueForImageAtLogicalX")
 					let imageNumber = delegate.valueForImageAtLogicalX(x, logicalY: y)
 					imageArray[imageNumber].drawInRect(frame)
 				}
@@ -65,10 +82,14 @@ class LEDMatrixView: NSView {
 		let pointInView	= convertPoint(theEvent.locationInWindow, fromView: nil)
 		let ledXPos		= Int(floor(pointInView.x / CGFloat(currentSize)))
 		let ledYPos		= Int(floor(pointInView.y / CGFloat(currentSize)))
+		println("mouse: \(pointInView) \(ledXPos),\(ledYPos)")
 		
 		delegate.nextValueForImageAtLogicalX(ledXPos, logicalY: ledYPos)
 		curXPos			= ledXPos; curYPos = ledYPos
-		needsDisplay	= true
+//		needsDisplay	= true
+		let dirtyRect = frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+		setNeedsDisplayInRect(dirtyRect)
+		
 	}
 	
 	override func mouseDragged(theEvent: NSEvent) {
@@ -84,7 +105,10 @@ class LEDMatrixView: NSView {
 				
 				delegate.nextValueForImageAtLogicalX(ledXPos, logicalY: ledYPos)
 				curXPos			= ledXPos; curYPos = ledYPos
-				needsDisplay	= true
+//				needsDisplay	= true
+				let dirtyRect = frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+				setNeedsDisplayInRect(dirtyRect)
+
 			}
 		}
 	}
