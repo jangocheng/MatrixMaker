@@ -6,7 +6,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController" customModule="MatrixMaker" customModuleProvider="target">
             <connections>
-                <outlet property="myMatrixView" destination="i2k-yl-yUT" id="QBl-j7-PSm"/>
+                <outlet property="myMatrixView" destination="i2k-yl-yUT" id="KXY-jp-kOr"/>
                 <outlet property="portBaudRate" destination="6Zr-MO-EXa" id="SSq-VG-G2a"/>
                 <outlet property="portOpenCloseButton" destination="hsW-0l-s3T" id="ST5-n8-5Ms"/>
                 <outlet property="portParity" destination="f5e-An-2Qx" id="jj9-7k-LoK"/>
@@ -32,36 +32,31 @@
                     </customView>
                 </subviews>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="FE5143C6-A9B1-4729-8322-3E751F792304" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="iWs-ik-9og">
+            <toolbar key="toolbar" implicitIdentifier="F2EA5774-60E2-46A4-8A91-A5B384A7EA08" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="HIm-jd-HYS">
                 <allowedToolbarItems>
-                    <toolbarItem implicitItemIdentifier="CB40FB00-DC6E-419F-A751-810437DED8EC" label="New" paletteLabel="New" tag="-1" image="new-s1" id="V4b-fR-E8x">
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="3XC-Vb-woi"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="7Rz-BW-i36"/>
+                    <toolbarItem implicitItemIdentifier="70B443C8-EC04-455E-A2AD-2D6EF54E2159" label="New" paletteLabel="New" tag="-1" image="new-s1" id="90m-zH-GUQ">
                         <connections>
-                            <action selector="toolbarNewWindow:" target="-2" id="bbx-LC-8oM"/>
+                            <action selector="toolbarNewWindow:" target="-2" id="wWT-vg-4a3"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="ADCAF03A-48FA-4A58-A3DF-4A872DF73461" label="Reset" paletteLabel="Reset" tag="5" image="reset-s1" id="EWo-bM-Fnd">
+                    <toolbarItem implicitItemIdentifier="011148FA-0F08-4708-BEDB-1AA91B2CAFDC" label="Reset" paletteLabel="Reset" tag="-1" image="reset-s1" id="KX6-jR-wAS">
                         <connections>
-                            <action selector="toolbarResetMatrix:" target="-2" id="bLD-bS-YvJ"/>
+                            <action selector="toolbarResetMatrix:" target="-2" id="hmp-tA-lsF"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="FC7E3068-DDA5-478F-8020-6622884E0378" label="Live View" paletteLabel="Live View" tag="-1" image="liveview-s1" id="ovN-IU-zea">
+                    <toolbarItem implicitItemIdentifier="30C2B3E9-78B6-4B70-9CE6-4CB9FF030354" label="Live View" paletteLabel="Live View" tag="-1" image="liveview-s1" id="CoB-qX-c3K">
                         <connections>
-                            <action selector="toggle:" target="zXC-Wf-cTF" id="og5-cw-8tb"/>
+                            <action selector="toggle:" target="zXC-Wf-cTF" id="aMW-5T-lKz"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="Tbj-Jf-Gvd"/>
-                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="wAs-9u-kdQ"/>
-                    <toolbarItem implicitItemIdentifier="04A9A22E-C8F4-41D0-A407-008955BB5876" label="Left" paletteLabel="Left" tag="-1" image="rotate_left" id="XUJ-Dw-FsX"/>
-                    <toolbarItem implicitItemIdentifier="8A4BE5A1-BA86-4333-976C-BEF6E49373DF" label="Right" paletteLabel="Right" tag="-1" image="rotate_right" id="sBo-eV-gkk"/>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
-                    <toolbarItem reference="V4b-fR-E8x"/>
-                    <toolbarItem reference="EWo-bM-Fnd"/>
-                    <toolbarItem reference="Tbj-Jf-Gvd"/>
-                    <toolbarItem reference="XUJ-Dw-FsX"/>
-                    <toolbarItem reference="sBo-eV-gkk"/>
-                    <toolbarItem reference="wAs-9u-kdQ"/>
-                    <toolbarItem reference="ovN-IU-zea"/>
+                    <toolbarItem reference="90m-zH-GUQ"/>
+                    <toolbarItem reference="KX6-jR-wAS"/>
+                    <toolbarItem reference="7Rz-BW-i36"/>
+                    <toolbarItem reference="CoB-qX-c3K"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
@@ -74,7 +69,7 @@
             <size key="maxContentSize" width="10000" height="10000"/>
             <connections>
                 <outlet property="contentView" destination="Pma-aW-dmp" id="df3-qS-Eil"/>
-                <outlet property="parentWindow" destination="F0z-JX-Cv5" id="qWr-ag-SXR"/>
+                <outlet property="parentWindow" destination="F0z-JX-Cv5" id="3zB-3U-hYF"/>
             </connections>
         </drawer>
         <customView id="Pma-aW-dmp" userLabel="Drawer Content View">
@@ -220,7 +215,5 @@ DQ
         <image name="liveview-s1" width="128" height="128"/>
         <image name="new-s1" width="128" height="128"/>
         <image name="reset-s1" width="128" height="128"/>
-        <image name="rotate_left" width="128" height="128"/>
-        <image name="rotate_right" width="128" height="128"/>
     </resources>
 </document>
