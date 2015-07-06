@@ -7,30 +7,35 @@
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController" customModule="MatrixMaker" customModuleProvider="target">
             <connections>
                 <outlet property="myMatrixView" destination="i2k-yl-yUT" id="KXY-jp-kOr"/>
+                <outlet property="myToolbar" destination="HIm-jd-HYS" id="rLb-qc-glc"/>
                 <outlet property="portBaudRate" destination="6Zr-MO-EXa" id="SSq-VG-G2a"/>
                 <outlet property="portOpenCloseButton" destination="hsW-0l-s3T" id="ST5-n8-5Ms"/>
-                <outlet property="portParity" destination="f5e-An-2Qx" id="jj9-7k-LoK"/>
                 <outlet property="portSelection" destination="X2P-1U-dti" id="IsL-UW-2DM"/>
                 <outlet property="portSettingsDrawer" destination="zXC-Wf-cTF" id="QzU-Ct-egg"/>
-                <outlet property="portStopBits" destination="dug-eF-dcX" id="6f1-Ma-Nmf"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Matrix Maker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="424" height="424"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <value key="minSize" type="size" width="296" height="296"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="424" height="424"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i2k-yl-yUT" customClass="LEDMatrixView" customModule="MatrixMaker" customModuleProvider="target">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="i2k-yl-yUT" customClass="LEDMatrixView" customModule="MatrixMaker" customModuleProvider="target">
                         <rect key="frame" x="20" y="20" width="384" height="384"/>
                     </customView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="i2k-yl-yUT" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="7Uh-Zh-ZBF"/>
+                    <constraint firstAttribute="bottom" secondItem="i2k-yl-yUT" secondAttribute="bottom" constant="20" symbolic="YES" id="FVt-uO-vMH"/>
+                    <constraint firstItem="i2k-yl-yUT" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="H7t-38-dG2"/>
+                    <constraint firstAttribute="trailing" secondItem="i2k-yl-yUT" secondAttribute="trailing" constant="20" symbolic="YES" id="M3o-0D-7Fe"/>
+                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="F2EA5774-60E2-46A4-8A91-A5B384A7EA08" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="HIm-jd-HYS">
                 <allowedToolbarItems>
@@ -51,10 +56,23 @@
                             <action selector="toggle:" target="zXC-Wf-cTF" id="aMW-5T-lKz"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="D79AE08E-24BB-4FFA-B0E1-D37F58B6B6DC" label="Left" paletteLabel="Left" tag="-1" image="rotate_left" id="73I-cm-33H">
+                        <connections>
+                            <action selector="toolbarRotateLeft:" target="-2" id="eHk-bn-0qL"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="D7E07658-C3E4-4E56-A8C9-0AB6688B512B" label="Right" paletteLabel="Right" tag="-1" image="rotate_right" id="U9G-P3-wKP">
+                        <connections>
+                            <action selector="toolbarRotateRight:" target="-2" id="CDw-vy-jYF"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="90m-zH-GUQ"/>
                     <toolbarItem reference="KX6-jR-wAS"/>
+                    <toolbarItem reference="3XC-Vb-woi"/>
+                    <toolbarItem reference="73I-cm-33H"/>
+                    <toolbarItem reference="U9G-P3-wKP"/>
                     <toolbarItem reference="7Rz-BW-i36"/>
                     <toolbarItem reference="CoB-qX-c3K"/>
                 </defaultToolbarItems>
@@ -62,7 +80,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="233" y="204"/>
+            <point key="canvasLocation" x="0.0" y="251"/>
         </window>
         <drawer trailingOffset="15" id="zXC-Wf-cTF">
             <size key="contentSize" width="100" height="100"/>
@@ -73,11 +91,11 @@
             </connections>
         </drawer>
         <customView id="Pma-aW-dmp" userLabel="Drawer Content View">
-            <rect key="frame" x="0.0" y="0.0" width="225" height="286"/>
+            <rect key="frame" x="0.0" y="5" width="225" height="184"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Zr-MO-EXa">
-                    <rect key="frame" x="18" y="160" width="190" height="26"/>
+                    <rect key="frame" x="18" y="58" width="190" height="26"/>
                     <popUpButtonCell key="cell" type="push" title="Select Baud Rate" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="5Sk-fY-OZR" id="KSS-Wo-bdx">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -93,6 +111,36 @@
                         <binding destination="-2" name="contentValues" keyPath="availableBaudRates" id="LNj-ZC-6Cf"/>
                     </connections>
                 </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IhL-kp-VlK">
+                    <rect key="frame" x="18" y="90" width="73" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Baud Rate:" id="Pe6-mX-Gph">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QQV-De-Do4">
+                    <rect key="frame" x="18" y="144" width="73" height="20"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Serial Port:" id="uFL-xN-za7">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="749" verticalCompressionResistancePriority="751" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X2P-1U-dti">
+                    <rect key="frame" x="18" y="112" width="190" height="26"/>
+                    <popUpButtonCell key="cell" type="push" title="Select Serial Port" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="b3L-td-rjk" id="ivJ-J7-ZEQ">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="nVT-Rp-eM2">
+                            <items>
+                                <menuItem id="vk3-ck-dNM"/>
+                                <menuItem title="Item 2" id="DGg-Ee-w9B"/>
+                                <menuItem title="Select Serial Port" state="on" id="b3L-td-rjk"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hsW-0l-s3T">
                     <rect key="frame" x="14" y="13" width="197" height="32"/>
                     <buttonCell key="cell" type="push" title="Connect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XYQ-K8-Oil">
@@ -106,108 +154,8 @@ DQ
                         <action selector="connectButtonClicked:" target="-2" id="16H-Uf-LTP"/>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IhL-kp-VlK">
-                    <rect key="frame" x="18" y="192" width="73" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Baud Rate:" id="Pe6-mX-Gph">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QQV-De-Do4">
-                    <rect key="frame" x="18" y="246" width="73" height="20"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Serial Port:" id="uFL-xN-za7">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <popUpButton verticalHuggingPriority="749" verticalCompressionResistancePriority="751" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X2P-1U-dti">
-                    <rect key="frame" x="18" y="214" width="190" height="26"/>
-                    <popUpButtonCell key="cell" type="push" title="Select Serial Port" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="b3L-td-rjk" id="ivJ-J7-ZEQ">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="nVT-Rp-eM2">
-                            <items>
-                                <menuItem id="vk3-ck-dNM"/>
-                                <menuItem title="Item 2" id="DGg-Ee-w9B"/>
-                                <menuItem title="Select Serial Port" state="on" id="b3L-td-rjk"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                </popUpButton>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GzE-Ms-7YV">
-                    <rect key="frame" x="18" y="138" width="44" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Parity:" id="gKL-PC-kfx">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gOz-nD-OL9">
-                    <rect key="frame" x="18" y="87" width="65" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Stop Bits:" id="F1C-Kn-mAb">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dug-eF-dcX">
-                    <rect key="frame" x="20" y="61" width="68" height="18"/>
-                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    <size key="cellSize" width="30" height="18"/>
-                    <size key="intercellSpacing" width="4" height="2"/>
-                    <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="SOJ-bq-oyi">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <cells>
-                        <column>
-                            <buttonCell type="radio" title="1" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="CcU-30-tHL">
-                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </column>
-                        <column>
-                            <buttonCell type="radio" title="2" imagePosition="left" alignment="left" inset="2" id="SEv-ew-6Dn">
-                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </column>
-                    </cells>
-                </matrix>
-                <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f5e-An-2Qx">
-                    <rect key="frame" x="20" y="112" width="185" height="18"/>
-                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    <size key="cellSize" width="55" height="18"/>
-                    <size key="intercellSpacing" width="4" height="2"/>
-                    <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="234-v3-Ujp">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <cells>
-                        <column>
-                            <buttonCell type="radio" title="None" imagePosition="left" alignment="left" state="on" inset="2" id="cOn-YZ-niJ">
-                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </column>
-                        <column>
-                            <buttonCell type="radio" title="Odd" imagePosition="left" alignment="left" tag="1" inset="2" id="e6q-e0-1Ha">
-                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </column>
-                        <column>
-                            <buttonCell type="radio" title="Even" imagePosition="left" alignment="left" tag="2" inset="2" id="BeD-VC-40R">
-                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
-                        </column>
-                    </cells>
-                </matrix>
             </subviews>
-            <point key="canvasLocation" x="207.5" y="-341"/>
+            <point key="canvasLocation" x="207.5" y="-392"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="Y9f-BT-b4y"/>
     </objects>
@@ -215,5 +163,7 @@ DQ
         <image name="liveview-s1" width="128" height="128"/>
         <image name="new-s1" width="128" height="128"/>
         <image name="reset-s1" width="128" height="128"/>
+        <image name="rotate_left" width="128" height="128"/>
+        <image name="rotate_right" width="128" height="128"/>
     </resources>
 </document>

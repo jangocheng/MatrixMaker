@@ -10,6 +10,7 @@ import Cocoa
 import ORSSerial
 
 class MainWindowController:	NSWindowController,
+							NSWindowDelegate,
 							NSUserNotificationCenterDelegate,
 							NSDrawerDelegate,
 							ORSSerialPortDelegate,
@@ -17,20 +18,29 @@ class MainWindowController:	NSWindowController,
 	
 	@IBOutlet weak var myMatrixView:		LEDMatrixView!
 	@IBOutlet weak var portSettingsDrawer:  NSDrawer!
-	@IBOutlet weak var portSettingsView:    NSView!
 	@IBOutlet weak var portSelection:		NSPopUpButton!
 	@IBOutlet weak var portBaudRate:        NSPopUpButton!
-	@IBOutlet weak var portParity:			NSMatrix!
-	@IBOutlet weak var portStopBits:		NSMatrix!
 	@IBOutlet weak var portOpenCloseButton:	NSButton!
+	@IBOutlet weak var myToolbar:			NSToolbar!
 	
-	var isPortOpen: Bool	= false
-	var ledStatusArray		= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
-	var dataToSend			= NSMutableData()
+	var isPortOpen				= false
+	var ledStatusArray			= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
+	var dataToSend				= NSMutableData()
+	var currentConnectionState	= matrixConnectionState.idle
+	var	timeoutTimer			= NSTimer()
+	var rxSyncBytes				= 0
 	
+	let rxNumberOfSyncBytes = 3
 	let serialPortManager	= ORSSerialPortManager.sharedSerialPortManager()
 	let availableBaudRates	= [   300,  1200,  2400,  4800,   9600,  14400,
 								19200, 28800, 38400, 57600, 115200, 230400]
+	
+	enum matrixConnectionState: UInt8 {
+		case idle			= 0
+		case connecting		= 1
+		case connected		= 2
+		case disconnecting	= 3
+	}
 	
 	var serialPort: ORSSerialPort? {
 		didSet {
@@ -45,14 +55,44 @@ class MainWindowController:	NSWindowController,
 		return "MainWindowController"
 	}
 	
+//	func windowWillResize(sender: NSWindow, toSize frameSize: NSSize) -> NSSize {
+//
+//		let oldX = sender.frame.width
+//		let oldY = sender.frame.height
+//		
+//		var newX = frameSize.width
+//		var newY = frameSize.height
+//		
+//		
+//		if(newY == oldY) {
+//			newY = newX + 80
+//		} else if(newX == oldX) {
+//			newX = newY - 80
+//		}
+//		
+//		let newSize = NSMakeSize(newX, newY)
+//		
+//		println("willResize: \(sender.frame.size)")
+//		println("toSize: \(frameSize)")
+	
+//		let resizeIncrement = CGFloat(myMatrixView.currentSize)
+//		
+//		window?.contentResizeIncrements = NSMakeSize(resizeIncrement,resizeIncrement)
+
+//		return frameSize
+//	}
+	
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 
+	
     override func windowDidLoad() {
 
 		super.windowDidLoad()
-
+		
+		window!.contentAspectRatio = NSMakeSize(1.0,1.0)
+		
 		myMatrixView!.imageArray = [(NSImage(named: "led_off.png")!),
 									(NSImage(named: "led_red.png")!),
 									(NSImage(named: "led_green.png")!),
@@ -61,11 +101,11 @@ class MainWindowController:	NSWindowController,
 		myMatrixView!.delegate		= self
 		myMatrixView.needsDisplay	= true
 		
-		let drawerSize = NSMakeSize(CGFloat(225), CGFloat(500))
-		
-		portSettingsDrawer.minContentSize	= drawerSize
-		portSettingsDrawer.maxContentSize	= drawerSize
-		portSettingsDrawer.contentSize		= drawerSize
+//		let drawerSize = NSMakeSize(CGFloat(225), CGFloat(500))
+//		portSettingsDrawer.minContentSize	= drawerSize
+//		portSettingsDrawer.maxContentSize	= drawerSize
+//		portSettingsDrawer.contentSize		= drawerSize
+
 		portSettingsDrawer.preferredEdge	= NSMaxXEdge
 		
 		// create menu for serial port list
@@ -138,7 +178,75 @@ class MainWindowController:	NSWindowController,
 		}
 		myMatrixView.needsDisplay = true
 	}
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:
+ Author:
+ 
+ Description:
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+
 	
+	@IBAction func toolbarRotateRight(sender: AnyObject) {
+		
+		var ledRotateArray	= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
+		let columnCount		= myMatrixView.columnCount
+		let rowCount		= myMatrixView.rowCount
+		
+		for x in 0..<columnCount {
+			for y in 0..<rowCount {
+				
+				let newX = ((myMatrixView.columnCount - y) - 1)
+				let newY = x
+				
+				ledRotateArray[newX][newY] = ledStatusArray[x][y]
+				
+			}
+		}
+		ledStatusArray = ledRotateArray
+		myMatrixView.needsDisplay = true
+
+	}
+	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:
+ Author:
+ 
+ Description:
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+	
+	
+	@IBAction func toolbarRotateLeft(sender: AnyObject) {
+		
+		var ledRotateArray	= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
+		let columnCount		= myMatrixView.columnCount
+		let rowCount		= myMatrixView.rowCount
+		
+		for x in 0..<columnCount {
+			for y in 0..<rowCount {
+				
+				let newX = y
+				let newY = ((myMatrixView.rowCount - x) - 1)
+				ledRotateArray[newX][newY] = ledStatusArray[x][y]
+				
+			}
+		}
+		ledStatusArray = ledRotateArray
+		myMatrixView.needsDisplay = true
+		
+	}
+
+
 /*--------------------------------------------------------------------------*\
  
  Function:
@@ -166,9 +274,6 @@ class MainWindowController:	NSWindowController,
 			serialPort?.baudRate = portBaudRate!.titleOfSelectedItem!.toInt()!
 			serialPort?.numberOfStopBits = 1
 			serialPort?.parity = ORSSerialPortParity.None
-			
-			println("Parity: \(portParity.cellWithTag(portParity.selectedTag())?.titleOfSelectedItem)")
-			
 			serialPort?.open()
 			string = "Opening Port \(serialPort!.path) / \(serialPort!.baudRate)\n"
 			
@@ -206,16 +311,19 @@ class MainWindowController:	NSWindowController,
 		if serialPort?.open == true {
 			
 //			println("serial data for (\(logicalX),\(logicalY)): \(ledStatusArray[logicalX][logicalY])")
+//			println("X:" + (NSString(format:"0x%02X", logicalX) as String))
+//			println("Y:" + (NSString(format:"0x%02X", logicalY) as String))
+//			println("C:" + (NSString(format:"0x%02X", ledStatusArray[logicalX][logicalY]) as String) + "\n")
+			
 			dataToSend.appendByte(UInt8(logicalX))
-			println(NSString(format:"0x%02X", logicalX))
 			dataToSend.appendByte(UInt8(logicalY))
-			println(NSString(format:"0x%02X", logicalY))
 			dataToSend.appendByte(UInt8(ledStatusArray[logicalX][logicalY]))
-			println(NSString(format:"0x%02X", ledStatusArray[logicalX][logicalY]))
 			serialPort?.sendData(dataToSend)
 			dataToSend.length = 0
 		}
 		
+//		println("valueForImageindex: \(logicalX),\(logicalY)")
+
 		return ledStatusArray[logicalX][logicalY]
 		
 	}
@@ -237,6 +345,7 @@ class MainWindowController:	NSWindowController,
 		var greenByteForRow:	UInt8
 		var redByteForRow:		UInt8
 		
+		println("index: \(logicalX),\(logicalY)")
 		ledStatusArray[logicalX][logicalY]++
 		
 		if ledStatusArray[logicalX][logicalY] == myMatrixView.imageArray.count {
@@ -247,7 +356,7 @@ class MainWindowController:	NSWindowController,
 	
 	// MARK: - ORSSerialPortDelegate
 	
-	/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  
  Function:
  Author:
@@ -257,20 +366,29 @@ class MainWindowController:	NSWindowController,
  Parameters:	void
  Returns:		void
  
-	\*--------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 	
 	func serialPortWasOpened(serialPort: ORSSerialPort) {
 		
 		portOpenCloseButton.title	= "Disconnect"
 		portSelection.enabled		= false
 		portBaudRate.enabled		= false
-		portParity.enabled			= false
-		portStopBits.enabled		= false
 		isPortOpen					= true
+		
+		// set flag to wait for hardware to initalize and set a timer
+		currentConnectionState		= matrixConnectionState.connecting
+
+		//TODO: SET TIMER
+//		timeoutTimer = NSTimer.scheduledTimerWithTimeInterval(
+//			5,
+//			target:self,
+//			selector: Selector("matrixFailedToSync"),
+//			userInfo: nil,
+//			repeats: false)
 		
 	}
 	
-	/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  
  Function:
  Author:
@@ -280,20 +398,18 @@ class MainWindowController:	NSWindowController,
  Parameters:	void
  Returns:		void
  
-	\*--------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 	
 	func serialPortWasClosed(serialPort: ORSSerialPort) {
 		
 		self.portOpenCloseButton.title  = "Connect"
 		self.portSelection.enabled      = true
 		self.portBaudRate.enabled       = true
-		self.portParity.enabled			= true
-		self.portStopBits.enabled		= true
 		self.isPortOpen                 = false
 		
 	}
 	
-	/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  
  Function:
  Author:
@@ -303,17 +419,19 @@ class MainWindowController:	NSWindowController,
  Parameters:	void
  Returns:		void
  
-	\*--------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 	
 	func serialPort(serialPort: ORSSerialPort, didReceiveData data: NSData) {
 
-		if let string = NSString(data: data, encoding: NSUTF8StringEncoding) {
-			println("rx: \(string)")
-		}
+		// data has been received from the hardware, send to method to process
+		receivedDataFromHardware(data)
+//		if let string = NSString(data: data, encoding: NSUTF8StringEncoding) {
+//			print(string)
+//		}
 		
 	}
 	
-	/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  
  Function:
  Author:
@@ -323,16 +441,13 @@ class MainWindowController:	NSWindowController,
  Parameters:	void
  Returns:		void
  
-	\*--------------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 	
 	func serialPortWasRemovedFromSystem(serialPort: ORSSerialPort) {
+
 		self.serialPort = nil
-		
-		let alert = NSAlert()
-		//		alert.messageText = "Port Removed"
-		//		alert.informativeText = "The selected serial port was removed from the system!"
-		//      alert.runModal()
 		self.portOpenCloseButton.title = "Connect"
+		
 	}
 	
 /*--------------------------------------------------------------------------*\
@@ -348,7 +463,9 @@ class MainWindowController:	NSWindowController,
 \*--------------------------------------------------------------------------*/
 	
 	func serialPort(serialPort: ORSSerialPort, didEncounterError error: NSError) {
+		
 		println("SerialPort \(serialPort) encountered an error: \(error)")
+		
 	}
 	
 	// MARK: - Notifications
@@ -403,6 +520,63 @@ class MainWindowController:	NSWindowController,
 		}
 	}
 
+/*--------------------------------------------------------------------------*\
+ 
+ Function:
+ Author:
+ 
+ Description:
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+	
+	func receivedDataFromHardware(rxData: NSData) {
+		
+		println(NSString(data: rxData, encoding: NSUTF8StringEncoding)!)
+
+//		switch currentConnectionState {
+//			
+//		case matrixConnectionState.connecting:
+//			
+//			var rxDataByteArray = [UInt8](count: rxData.length, repeatedValue: 0)
+//			rxData.getBytes(&rxDataByteArray, length: rxData.length)
+//			
+//			for rxByte in rxDataByteArray {
+//				if rxByte == 0x03 {
+//					if(rxSyncBytes == rxNumberOfSyncBytes) {
+//						
+//						currentConnectionState = matrixConnectionState.connected
+//						timeoutTimer.invalidate()
+//						rxSyncBytes = 0
+//						
+//					} else {
+//						
+//						rxSyncBytes++
+//					
+//					}
+//					
+//				} else {
+//					
+//					print(rxByte.char())
+//					
+//				}
+//			}
+//
+//		default:
+//			break
+//			
+//		}
+
+	}
+	
+	func matrixFailedToSync() {
+		println("Failed to connect to matrix")
+		rxSyncBytes = 0
+		currentConnectionState = matrixConnectionState.idle
+		serialPort!.close()
+	}
 
 /*********************** End Window Controller      *************************/
 

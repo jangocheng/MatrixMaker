@@ -125,8 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				D0F587821B44CE0200EA0D73 /* images */,
-				D0F587751B44CCE500EA0D73 /* MainMenu.xib */,
-				D0F587771B44CCF700EA0D73 /* MainWindowController.xib */,
+				D054D7A51B44D0AF00D5EC16 /* GUI */,
 				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
 				D03DE74D1B425D5B00E5C088 /* LEDMatrixView.swift */,
 				D03DE7151B42549800E5C088 /* MainWindowController.swift */,
@@ -152,6 +151,15 @@
 				D03DE70A1B4253F800E5C088 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D054D7A51B44D0AF00D5EC16 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				D0F587751B44CCE500EA0D73 /* MainMenu.xib */,
+				D0F587771B44CCF700EA0D73 /* MainWindowController.xib */,
+			);
+			name = GUI;
 			sourceTree = "<group>";
 		};
 		D07D9EBA1B4385F800548C61 /* Products */ = {

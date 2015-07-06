@@ -13,3 +13,9 @@ extension NSMutableData {
 		self.appendBytes(&b, length: 1)
 	}
 }
+
+extension UInt8 {
+	func char() -> Character {
+		return Character(UnicodeScalar(Int(self)))
+	}
+}
