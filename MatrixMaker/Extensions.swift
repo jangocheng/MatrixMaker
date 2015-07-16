@@ -15,7 +15,7 @@ extension NSMutableData {
 }
 
 extension UInt8 {
-	func char() -> Character {
+	func asChar() -> Character {
 		return Character(UnicodeScalar(Int(self)))
 	}
 }

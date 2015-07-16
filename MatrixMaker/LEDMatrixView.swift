@@ -11,6 +11,7 @@ import Cocoa
 @objc protocol LEDMatrixViewDelegate {
 	func valueForImageAtLogicalX(logicalX: Int, logicalY: Int) -> Int
 	func nextValueForImageAtLogicalX(logicalX: Int, logicalY: Int)
+	optional func matrixViewDidChange()
 }
 
 class LEDMatrixView: NSView {
@@ -23,39 +24,68 @@ class LEDMatrixView: NSView {
 	var curXPos			= 0
 	var curYPos			= 0
 	
-	var currentSize		= 48
-	var prevoiousSize	= 48
+	var currentSize		= 48.0	as CGFloat
 	
 	var delegate: LEDMatrixViewDelegate! = nil
+	
+	var creatingImageForMatrixView	= false
+	var matrixViewIsChanging		= true
+	
+	var imageForMatrixView: NSImage {
+		let dataOfMatrixView = self.dataWithPDFInsideRect(self.bounds)
+		return NSImage(data: dataOfMatrixView)!
+	}
+
 	
 	override var flipped: Bool {
 		return true
 	}
 	
+	override func awakeFromNib() {
+		imageArray = [
+			(NSImage(named: "led_off.png")!),
+			(NSImage(named: "led_red.png")!),
+			(NSImage(named: "led_green.png")!),
+			(NSImage(named: "led_orange.png")!)
+		]
+
+	}
     override func drawRect(dirtyRect: NSRect) {
 		
 		// draw background
-		
 		let backgroundColor = NSColor.darkGrayColor()
 		backgroundColor.set()
 		NSBezierPath.fillRect(bounds)
 
-//		println("Rect: \(dirtyRect)")
+		let xStart	= (dirtyRect.origin.x / currentSize)
+		let xEnd	= (xStart + (dirtyRect.size.width / currentSize))
 
-		let xStart	= Int(dirtyRect.origin.x / CGFloat(currentSize))
-		let xEnd	= Int(CGFloat(xStart) + (dirtyRect.size.width / CGFloat(currentSize)))
+		let yStart	= (dirtyRect.origin.y / currentSize)
+		let yEnd	= (yStart + (dirtyRect.size.height / currentSize))
+		
+		let columnStart = Int(ceil(xStart))
+		let columnEnd	= Int(floor(xEnd))
+		
+		let rowStart	= Int(ceil(yStart))
+		let rowEnd		= Int(floor(yEnd))
 
-		let yStart	= Int(dirtyRect.origin.y / CGFloat(currentSize))
-		let yEnd	= Int(CGFloat(yStart) + (dirtyRect.size.height / CGFloat(currentSize)))
-
-		for x in xStart..<xEnd {
-			for y in yStart..<yEnd {
+		for x in columnStart..<columnEnd {
+			for y in rowStart..<rowEnd {
 				let frame = frameForImageAtLogicalX(x, logicalY: y)
-				if !imageArray.isEmpty{
+				
+				if (self.delegate != nil) {
 					let imageNumber = delegate.valueForImageAtLogicalX(x, logicalY: y)
+					imageArray[imageNumber].drawInRect(frame)
+				} else {
+					let imageNumber = 0
 					imageArray[imageNumber].drawInRect(frame)
 				}
 			}
+		}
+		
+		if(matrixViewIsChanging == true) {
+			matrixViewIsChanging = false
+			delegate?.matrixViewDidChange!()
 		}
 	}
 
@@ -68,13 +98,11 @@ class LEDMatrixView: NSView {
 //	}
 	
 	override func viewDidMoveToWindow() {
-
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		notificationCenter.addObserver(self,
 									selector:   "windowResized",
 									name:       NSWindowDidResizeNotification,
 									object:     self.window)
-	
 	}
 	
 	deinit {
@@ -83,24 +111,14 @@ class LEDMatrixView: NSView {
 	
 	func windowResized() {
 
-		var newFrame = self.frame
-//		println("newsize: \(self.frame)")
+		var newFrame			= self.frame
+		let maxEdgeLength		= max(frame.height, frame.width)
+		newFrame.size.height	= maxEdgeLength
+		newFrame.size.width		= maxEdgeLength
+		self.frame				= newFrame
 		
-		// autosizing
-		
-		// get largest size (width or height)
-		let maxEdgeLength = max(frame.height, frame.width)
-//		println("maxEdgeLength: \(maxEdgeLength)")
-		
-		newFrame.size.height = maxEdgeLength
-		newFrame.size.width  = maxEdgeLength
-		self.frame = newFrame
-		
-		let pixelSize = (floor(maxEdgeLength / CGFloat(columnCount)))
-//		println("pixelSize: \(pixelSize)")
-//		println("newsize2: \(self.frame)")
-		
-		currentSize = Int(pixelSize)
+		let pixelSize = (/*floor*/(maxEdgeLength / CGFloat(columnCount)))
+		currentSize = pixelSize
 
 	}
 	
@@ -117,8 +135,8 @@ class LEDMatrixView: NSView {
 		curYPos			= ledYPos
 
 		let dirtyRect	= frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+		matrixViewIsChanging = true
 		setNeedsDisplayInRect(dirtyRect)
-		
 	}
 	
 	override func mouseDragged(theEvent: NSEvent) {
@@ -137,6 +155,7 @@ class LEDMatrixView: NSView {
 				curYPos = ledYPos
 
 				let dirtyRect = frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+				matrixViewIsChanging = true
 				setNeedsDisplayInRect(dirtyRect)
 
 			}
@@ -146,12 +165,25 @@ class LEDMatrixView: NSView {
 	// MARK: - Drawing
 	
 	func frameForImageAtLogicalX(logicalX: Int, logicalY: Int) -> CGRect {
-		let spacing	= 0
+
 		let width	= currentSize
 		let height	= currentSize
 		
-		let x		= (spacing + width)  * logicalX
-		let y		= (spacing + height) * logicalY
+		let x		= width  * CGFloat(logicalX)
+		let y		= height * CGFloat(logicalY)
+
 		return CGRect(x: x, y: y, width: width, height: height)
+		
 	}
+	
+	//
+//	func makeImageForCurrentView()-> NSImage {
+//		println("imageForCurrentView()")
+//		matrixViewIsChanging = false
+//		let dataOfView = self.dataWithPDFInsideRect(self.bounds)
+//		let imageOfView = NSImage(data: dataOfView)
+//		matrixViewIsChanging = true
+//		return imageOfView!
+//
+//	}
 }
