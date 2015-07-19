@@ -9,9 +9,9 @@
 import Cocoa
 
 @objc protocol LEDMatrixViewDelegate {
-	func valueForImageAtLogicalX(logicalX: Int, logicalY: Int) -> Int
-	func nextValueForImageAtLogicalX(logicalX: Int, logicalY: Int)
-	optional func matrixViewDidChange()
+	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
+	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int)
+	optional func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange)
 }
 
 class LEDMatrixView: NSView {
@@ -28,8 +28,7 @@ class LEDMatrixView: NSView {
 	
 	var delegate: LEDMatrixViewDelegate! = nil
 	
-	var creatingImageForMatrixView	= false
-	var matrixViewIsChanging		= true
+	var matrixViewIsChanging		= false
 	
 	var imageForMatrixView: NSImage {
 		let dataOfMatrixView = self.dataWithPDFInsideRect(self.bounds)
@@ -52,11 +51,16 @@ class LEDMatrixView: NSView {
 	}
     override func drawRect(dirtyRect: NSRect) {
 		
+		
+		
 		// draw background
 		let backgroundColor = NSColor.darkGrayColor()
 		backgroundColor.set()
 		NSBezierPath.fillRect(bounds)
 
+		// determine the x,y logical cooridinate to start and end
+		// this should be either the entire view, or a single LED
+		// image that needs to be drawn
 		let xStart	= (dirtyRect.origin.x / currentSize)
 		let xEnd	= (xStart + (dirtyRect.size.width / currentSize))
 
@@ -68,13 +72,16 @@ class LEDMatrixView: NSView {
 		
 		let rowStart	= Int(ceil(yStart))
 		let rowEnd		= Int(floor(yEnd))
+		
+		let xRange = NSMakeRange(columnStart, columnEnd)
+		let yRange = NSMakeRange(rowStart, rowEnd)
 
 		for x in columnStart..<columnEnd {
 			for y in rowStart..<rowEnd {
 				let frame = frameForImageAtLogicalX(x, logicalY: y)
 				
 				if (self.delegate != nil) {
-					let imageNumber = delegate.valueForImageAtLogicalX(x, logicalY: y)
+					let imageNumber = delegate.valueForMatrixAtLogicalX(x, logicalY: y)
 					imageArray[imageNumber].drawInRect(frame)
 				} else {
 					let imageNumber = 0
@@ -83,9 +90,10 @@ class LEDMatrixView: NSView {
 			}
 		}
 		
+		// only call delegate function if the display view is changing
 		if(matrixViewIsChanging == true) {
 			matrixViewIsChanging = false
-			delegate?.matrixViewDidChange!()
+			delegate?.matrixViewDidChange!(xRange, rangeForY: yRange)
 		}
 	}
 
@@ -112,14 +120,18 @@ class LEDMatrixView: NSView {
 	func windowResized() {
 
 		var newFrame			= self.frame
-		let maxEdgeLength		= max(frame.height, frame.width)
-		newFrame.size.height	= maxEdgeLength
-		newFrame.size.width		= maxEdgeLength
+		let minEdgeLength		= min(frame.height, frame.width)
+		newFrame.size.height	= minEdgeLength
+		newFrame.size.width		= minEdgeLength
 		self.frame				= newFrame
 		
-		let pixelSize = (/*floor*/(maxEdgeLength / CGFloat(columnCount)))
+		let pixelSize = (minEdgeLength / CGFloat(columnCount))
 		currentSize = pixelSize
-
+	}
+	
+	func refreshMatrix() {
+		matrixViewIsChanging = true
+		needsDisplay = true
 	}
 	
 	// MARK: - Mouse Events
@@ -129,14 +141,18 @@ class LEDMatrixView: NSView {
 		let pointInView	= convertPoint(theEvent.locationInWindow, fromView: nil)
 		let ledXPos		= Int(floor(pointInView.x / CGFloat(currentSize)))
 		let ledYPos		= Int(floor(pointInView.y / CGFloat(currentSize)))
-		
-		delegate.nextValueForImageAtLogicalX(ledXPos, logicalY: ledYPos)
-		curXPos			= ledXPos
-		curYPos			= ledYPos
+				
+		if ((ledXPos < columnCount) && (ledYPos < rowCount)) &&
+			((ledXPos >= 0) && (ledYPos >= 0)){
+			
+			delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
+			curXPos			= ledXPos
+			curYPos			= ledYPos
 
-		let dirtyRect	= frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
-		matrixViewIsChanging = true
-		setNeedsDisplayInRect(dirtyRect)
+			let dirtyRect	= frameForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+			matrixViewIsChanging = true
+			setNeedsDisplayInRect(dirtyRect)
+		}
 	}
 	
 	override func mouseDragged(theEvent: NSEvent) {
@@ -150,7 +166,7 @@ class LEDMatrixView: NSView {
 			if ((ledXPos < columnCount) && (ledYPos < rowCount)) &&
 				((ledXPos >= 0) && (ledYPos >= 0)){
 				
-				delegate.nextValueForImageAtLogicalX(ledXPos, logicalY: ledYPos)
+				delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
 				curXPos	= ledXPos
 				curYPos = ledYPos
 
@@ -176,14 +192,4 @@ class LEDMatrixView: NSView {
 		
 	}
 	
-	//
-//	func makeImageForCurrentView()-> NSImage {
-//		println("imageForCurrentView()")
-//		matrixViewIsChanging = false
-//		let dataOfView = self.dataWithPDFInsideRect(self.bounds)
-//		let imageOfView = NSImage(data: dataOfView)
-//		matrixViewIsChanging = true
-//		return imageOfView!
-//
-//	}
 }

@@ -16,6 +16,13 @@ class MainWindowController:	NSWindowController,
 							ORSSerialPortDelegate,
 							LEDMatrixViewDelegate {
 	
+	enum matrixConnectionState: UInt8 {
+		case idle			= 0
+		case connecting		= 1
+		case connected		= 2
+		case disconnecting	= 3
+	}
+	
 	@IBOutlet weak var myMatrixView:		LEDMatrixView!
 	@IBOutlet weak var portSettingsDrawer:  NSDrawer!
 	@IBOutlet weak var portSelection:		NSPopUpButton!
@@ -32,12 +39,11 @@ class MainWindowController:	NSWindowController,
 	var rxSyncBytes				= 0
 	var counter					= 0
 	
-	
 	let rxNumberOfSyncBytes = 3
 	let serialPortManager	= ORSSerialPortManager.sharedSerialPortManager()
-	let availableBaudRates	= [   300,  1200,  2400,  4800,   9600,  14400,
-								19200, 28800, 38400, 57600, 115200, 230400,
-							   250000]
+	let availableBaudRates	= [   300,    1200,    2400,  4800,   9600,  14400,
+								19200,   28800,   38400, 57600, 115200, 230400,
+							   250000, 1000000, 2000000]
 	
 /*
 // characters used for serial comms
@@ -58,14 +64,7 @@ class MainWindowController:	NSWindowController,
 	let controlCharACK		= 0x06 as UInt8
 	
 	// command characters
-	let commandPlot			= 0xA0 as UInt8
-	
-	enum matrixConnectionState: UInt8 {
-		case idle			= 0
-		case connecting		= 1
-		case connected		= 2
-		case disconnecting	= 3
-	}
+	let commandCharPlot		= 0xA0 as UInt8
 	
 	var serialPort: ORSSerialPort? {
 		didSet {
@@ -96,10 +95,24 @@ class MainWindowController:	NSWindowController,
 		
 		// create menu for serial port list
 		portSelection.removeAllItems()
+		
 		for port in serialPortManager.availablePorts {
-			portSelection.addItemWithTitle(port.name)
+			
+			let currentPort = port as! ORSSerialPort
+			var portSelectionMenuItem = NSMenuItem()
+			
+			portSelectionMenuItem.title = currentPort.name
+			portSelectionMenuItem.representedObject = currentPort
+			
+			if(currentPort.open == true) {
+				portSelectionMenuItem.enabled = false
+			}
+			portSelection.menu!.addItem(portSelectionMenuItem)
+			
 		}
-		portBaudRate.selectItemWithTitle("250000")
+		// TODO: de-select disabled menu item
+		
+		portBaudRate.selectItemWithTitle("1000000")
 		
 		// set up to receive ORSSerialPorts notifications
 		let notificationCenter = NSNotificationCenter.defaultCenter()
@@ -119,6 +132,26 @@ class MainWindowController:	NSWindowController,
 		NSApplication.sharedApplication().applicationIconImage =
 			myMatrixView.imageForMatrixView
 	}
+	
+	// validate the menu items for serial port nspopupbutton
+	override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+		
+		// check if action method is for portSelect NSPopUpButton
+		if(menuItem.action == Selector("portSelectMenuClicked:")) {
+			let serialPortItem = menuItem.representedObject as! ORSSerialPort
+
+			// check if port is open, if so, then disable menu item
+			if(serialPortItem.open == true) {
+				return false
+			} else {
+				return super.validateMenuItem(menuItem)
+			}
+		// menuItem not from portSelect: NSPopUpButton, validate as true
+		} else {
+			return super.validateMenuItem(menuItem)
+		}
+	}
+
 
 // MARK: - Actions
 	
@@ -161,8 +194,7 @@ class MainWindowController:	NSWindowController,
 				ledStatusArray[x][y] = 0
 			}
 		}
-		myMatrixView.matrixViewIsChanging	= true
-		myMatrixView.needsDisplay			= true
+		myMatrixView.refreshMatrix()
 	}
 
 /*--------------------------------------------------------------------------*\
@@ -180,23 +212,21 @@ class MainWindowController:	NSWindowController,
 	
 	@IBAction func toolbarRotateRight(sender: AnyObject) {
 		
+		let columnCount		= myMatrixView.columnCount
+		let rowCount		= myMatrixView.rowCount
+		
 		var ledRotateArray	= [[Int]](
-				count: myMatrixView.rowCount,
+				count: columnCount,
 				repeatedValue:[Int](
-					count: myMatrixView.columnCount,
+					count: rowCount,
 					repeatedValue:0
 				)
 		)
 		
-		
-		
-		let columnCount		= myMatrixView.columnCount
-		let rowCount		= myMatrixView.rowCount
-		
 		for x in 0..<columnCount {
 			for y in 0..<rowCount {
 				
-				let newX = ((myMatrixView.columnCount - y) - 1)
+				let newX = ((columnCount - y) - 1)
 				let newY = x
 				
 				ledRotateArray[newX][newY] = ledStatusArray[x][y]
@@ -204,10 +234,8 @@ class MainWindowController:	NSWindowController,
 			}
 		}
 		
-		ledStatusArray						= ledRotateArray
-		
-		myMatrixView.matrixViewIsChanging	= true
-		myMatrixView.needsDisplay			= true
+		ledStatusArray = ledRotateArray
+		myMatrixView.refreshMatrix()
 
 	}
 	
@@ -225,23 +253,28 @@ class MainWindowController:	NSWindowController,
 	
 	@IBAction func toolbarRotateLeft(sender: AnyObject) {
 		
-		var ledRotateArray	= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
 		let columnCount		= myMatrixView.columnCount
 		let rowCount		= myMatrixView.rowCount
+		
+		var ledRotateArray	= [[Int]](
+			count: columnCount,
+			repeatedValue:[Int](
+				count: rowCount,
+				repeatedValue:0
+			)
+		)
 		
 		for x in 0..<columnCount {
 			for y in 0..<rowCount {
 				
 				let newX = y
-				let newY = ((myMatrixView.rowCount - x) - 1)
+				let newY = ((rowCount - x) - 1)
 				ledRotateArray[newX][newY] = ledStatusArray[x][y]
 			}
 		}
 		
-		ledStatusArray						= ledRotateArray
-		
-		myMatrixView.matrixViewIsChanging	= true
-		myMatrixView.needsDisplay			= true
+		ledStatusArray = ledRotateArray
+		myMatrixView.refreshMatrix()
 		
 	}
 
@@ -264,12 +297,8 @@ class MainWindowController:	NSWindowController,
 		var string = ""
 		
 		if isPortOpen == false {
-			for port in serialPortManager.availablePorts {
-				if port.name == portSelection.titleOfSelectedItem! {
-					serialPort = port as? ORSSerialPort
-				}
-			}
-			
+
+			serialPort = portSelection.selectedItem!.representedObject as? ORSSerialPort
 			serialPort?.baudRate = portBaudRate!.titleOfSelectedItem!.toInt()!
 			serialPort?.numberOfStopBits = 1
 			serialPort?.parity = ORSSerialPortParity.None
@@ -286,7 +315,12 @@ class MainWindowController:	NSWindowController,
 		println(string)
 		
 	}
-
+	
+	
+	// Empty method as action to portSelect: NSPopUpMenu so that
+	// menu validation will be enabled
+	@IBAction func portSelectMenuClicked(sender: AnyObject) {
+	}
 
 	
 // MARK: - LEDMatrixViewDelegate
@@ -303,25 +337,30 @@ class MainWindowController:	NSWindowController,
  
 \*--------------------------------------------------------------------------*/
 	
-	func valueForImageAtLogicalX(logicalX: Int, logicalY: Int) -> Int {
-		
-		// if connected to µcontroller, update hardware
-		if serialPort?.open == true {
-			
-//			println("serial data for (\(logicalX),\(logicalY)): \(ledStatusArray[logicalX][logicalY])")
-//			println("X:" + (NSString(format:"0x%02X", logicalX) as String))
-//			println("Y:" + (NSString(format:"0x%02X", logicalY) as String))
-//			println("C:" + (NSString(format:"0x%02X", ledStatusArray[logicalX][logicalY]) as String) + "\n")
-			
-//			dataToSend.appendByte(controlCharSTX)
-			dataToSend.appendByte(UInt8(logicalX))
-			dataToSend.appendByte(UInt8(logicalY))
-			dataToSend.appendByte(UInt8(ledStatusArray[logicalX][logicalY]))
-			serialPort?.sendData(dataToSend)
-			dataToSend.length = 0
-		}
+	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int {
 		
 		return ledStatusArray[logicalX][logicalY]
+
+	}
+	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:
+ Author:
+ 
+ Description:
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+	
+	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) {
+
+		ledStatusArray[logicalX][logicalY]++
+		if ledStatusArray[logicalX][logicalY] == myMatrixView.imageArray.count {
+			ledStatusArray[logicalX][logicalY] = 0
+		}
 		
 	}
 	
@@ -337,17 +376,26 @@ class MainWindowController:	NSWindowController,
  
 \*--------------------------------------------------------------------------*/
 	
-	func nextValueForImageAtLogicalX(logicalX: Int, logicalY: Int) {
-		ledStatusArray[logicalX][logicalY]++
+	func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange) {
+		
+		if currentConnectionState == matrixConnectionState.connected {
+			for x in rangeForX.location..<rangeForX.length {
+				for y in rangeForY.location..<rangeForY.length {
+					
+//					println("serial data for (\(x),\(y)): \(ledStatusArray[x][y])")
+//					println("X:" + (NSString(format:"%i", x) as String))
+//					println("Y:" + (NSString(format:"%i", y) as String))
+//					println("C:" + (NSString(format:"%i", ledStatusArray[x][y]) as String) + "\n")
 
-		if ledStatusArray[logicalX][logicalY] == myMatrixView.imageArray.count {
-			ledStatusArray[logicalX][logicalY] = 0
+					dataToSend.appendByte(UInt8(x))
+					dataToSend.appendByte(UInt8(y))
+					dataToSend.appendByte(UInt8(ledStatusArray[x][y]))
+					serialPort?.sendData(dataToSend)
+					dataToSend.length = 0
+				}
+			}
 		}
 		
-	}
-	
-	func matrixViewDidChange() {
-
 		let viewImage = myMatrixView.imageForMatrixView
 		NSApplication.sharedApplication().applicationIconImage = viewImage
 		
@@ -380,7 +428,7 @@ class MainWindowController:	NSWindowController,
 		// Set a timer to fire off every 1/2 second sending an ENQ char
 		// waiting for hardware to respond
 		sendENQTimer = NSTimer.scheduledTimerWithTimeInterval(
-			1,
+			2,
 			target:		self,
 			selector:	Selector("sendENQToSyncMatrix"),
 			userInfo:	nil,
@@ -415,6 +463,8 @@ class MainWindowController:	NSWindowController,
 		portBaudRate.enabled		= true
 		isPortOpen					= false
 		currentConnectionState		= matrixConnectionState.idle
+		sendENQTimer.invalidate()
+		timeoutTimer.invalidate()
 	}
 	
 /*--------------------------------------------------------------------------*\
@@ -454,6 +504,9 @@ class MainWindowController:	NSWindowController,
 	func serialPortWasRemovedFromSystem(serialPort: ORSSerialPort) {
 
 		self.serialPort = nil
+		sendENQTimer.invalidate()
+		timeoutTimer.invalidate()
+		currentConnectionState	= matrixConnectionState.idle
 		self.portOpenCloseButton.title = "Connect"
 		
 	}
@@ -501,12 +554,18 @@ class MainWindowController:	NSWindowController,
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortsWereConnected(notification: NSNotification) {
+
+		
 		if let userInfo = notification.userInfo {
 			let connectedPorts = userInfo[ORSConnectedSerialPortsKey] as! [ORSSerialPort]
 			println("Ports were connected: \(connectedPorts)")
 			
 			for port in connectedPorts {
-				portSelection.addItemWithTitle(port.name)
+				
+				var serialPortMenuItem					= NSMenuItem()
+				serialPortMenuItem.title				= port.name
+				serialPortMenuItem.representedObject	= port
+				portSelection.menu?.addItem(serialPortMenuItem)
 			}
 		}
 	}
@@ -527,10 +586,6 @@ class MainWindowController:	NSWindowController,
 		if let userInfo = notification.userInfo {
 			let disconnectedPorts: [ORSSerialPort] = userInfo[ORSDisconnectedSerialPortsKey] as! [ORSSerialPort]
 			println("Ports were disconnected: \(disconnectedPorts)")
-			
-			let alert = NSAlert()
-			alert.messageText = "Port Removed"
-			alert.informativeText = "The selected serial port was removed from the system!"
 			
 			for port in disconnectedPorts {
 				portSelection.removeItemWithTitle(port.name)
@@ -568,8 +623,8 @@ class MainWindowController:	NSWindowController,
 						currentConnectionState = matrixConnectionState.connected
 						rxDataByteArray.removeAll(keepCapacity: false)
 						println()
-						println("Connected to matrix, refreshing display.")
-						myMatrixView.needsDisplay = true;
+						println("Connected to matrix, rx'd ACK, refreshing display.")
+						myMatrixView.refreshMatrix()
 					} else {
 						print(rxByte.asChar())
 					}
@@ -577,7 +632,9 @@ class MainWindowController:	NSWindowController,
 				break
 			
 			case matrixConnectionState.connected:
-				print(rxData)
+				for rxByte in rxDataByteArray {
+					print(rxByte.asChar())
+				}
 				break
 			
 			default:

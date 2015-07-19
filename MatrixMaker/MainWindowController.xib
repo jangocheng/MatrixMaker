@@ -20,7 +20,7 @@
         <window title="Matrix Maker" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="196" y="240" width="424" height="424"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <value key="minSize" type="size" width="240" height="240"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="424" height="424"/>
@@ -80,7 +80,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="0.0" y="251"/>
+            <point key="canvasLocation" x="-1" y="256"/>
         </window>
         <drawer trailingOffset="15" id="zXC-Wf-cTF">
             <size key="contentSize" width="100" height="100"/>
@@ -140,6 +140,9 @@
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="portSelectMenuClicked:" target="-2" id="7Qm-j2-0hA"/>
+                    </connections>
                 </popUpButton>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hsW-0l-s3T">
                     <rect key="frame" x="14" y="13" width="197" height="32"/>
