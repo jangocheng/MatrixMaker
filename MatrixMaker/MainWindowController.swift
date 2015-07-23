@@ -13,6 +13,7 @@ class MainWindowController:	NSWindowController,
 							NSWindowDelegate,
 							NSUserNotificationCenterDelegate,
 							NSDrawerDelegate,
+							NSTabViewDelegate,
 							ORSSerialPortDelegate,
 							LEDMatrixViewDelegate {
 	
@@ -29,17 +30,16 @@ class MainWindowController:	NSWindowController,
 	@IBOutlet weak var portBaudRate:        NSPopUpButton!
 	@IBOutlet weak var portOpenCloseButton:	NSButton!
 	@IBOutlet weak var myToolbar:			NSToolbar!
-	
+	@IBOutlet weak var imageCodeTabView:	NSTabView!
+	@IBOutlet	   var codeTextView:		NSTextView!
+		
 	var isPortOpen				= false
 	var ledStatusArray			= [[Int]](count: 8, repeatedValue:[Int](count: 8, repeatedValue:0))
 	var dataToSend				= NSMutableData()
-	var currentConnectionState	= matrixConnectionState.idle
+	var currentConnectionState	= .idle as matrixConnectionState
 	var	timeoutTimer			= NSTimer()
 	var sendENQTimer			= NSTimer()
-	var rxSyncBytes				= 0
-	var counter					= 0
 	
-	let rxNumberOfSyncBytes = 3
 	let serialPortManager	= ORSSerialPortManager.sharedSerialPortManager()
 	let availableBaudRates	= [   300,    1200,    2400,  4800,   9600,  14400,
 								19200,   28800,   38400, 57600, 115200, 230400,
@@ -66,9 +66,13 @@ class MainWindowController:	NSWindowController,
 	// command characters
 	let commandCharPlot		= 0xA0 as UInt8
 	
+	let colorRed	= 1 as UInt8
+	let colorGreen	= 2 as UInt8
+	let colorOrange = 3 as UInt8
+	
 	var serialPort: ORSSerialPort? {
 		didSet {
-			println("Setting serialPort")
+			println("Setting serialPort: old: \(oldValue) new: \(serialPort)")
 			oldValue?.close()
 			oldValue?.delegate						= nil
 			serialPort?.delegate					= self
@@ -89,11 +93,16 @@ class MainWindowController:	NSWindowController,
 
 		super.windowDidLoad()
 		
-		window!.contentAspectRatio			= NSMakeSize(1.0,1.0)
 		myMatrixView!.delegate				= self
-		portSettingsDrawer.preferredEdge	= NSMaxXEdge
+		imageCodeTabView!.delegate			= self
+		
+		let myFont = NSFont.userFixedPitchFontOfSize(CGFloat(12))
+		codeTextView.font = myFont!
+
+		portSettingsDrawer.preferredEdge	= (NSMaxXEdge)
 		
 		// create menu for serial port list
+		// TODO: Change to pull down with 'title' item
 		portSelection.removeAllItems()
 		
 		for port in serialPortManager.availablePorts {
@@ -107,10 +116,9 @@ class MainWindowController:	NSWindowController,
 			if(currentPort.open == true) {
 				portSelectionMenuItem.enabled = false
 			}
+		
 			portSelection.menu!.addItem(portSelectionMenuItem)
-			
 		}
-		// TODO: de-select disabled menu item
 		
 		portBaudRate.selectItemWithTitle("1000000")
 		
@@ -129,22 +137,23 @@ class MainWindowController:	NSWindowController,
 		
 		NSUserNotificationCenter.defaultUserNotificationCenter().delegate = self
 	
-		NSApplication.sharedApplication().applicationIconImage =
-			myMatrixView.imageForMatrixView
+		setDockIconAsMatrixView()
+
 	}
 	
 	// validate the menu items for serial port nspopupbutton
 	override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
 		
+		println("validateMenuItem")
+		
 		// check if action method is for portSelect NSPopUpButton
 		if(menuItem.action == Selector("portSelectMenuClicked:")) {
 			let serialPortItem = menuItem.representedObject as! ORSSerialPort
-
 			// check if port is open, if so, then disable menu item
 			if(serialPortItem.open == true) {
 				return false
 			} else {
-				return super.validateMenuItem(menuItem)
+				return true
 			}
 		// menuItem not from portSelect: NSPopUpButton, validate as true
 		} else {
@@ -298,12 +307,27 @@ class MainWindowController:	NSWindowController,
 		
 		if isPortOpen == false {
 
-			serialPort = portSelection.selectedItem!.representedObject as? ORSSerialPort
-			serialPort?.baudRate = portBaudRate!.titleOfSelectedItem!.toInt()!
-			serialPort?.numberOfStopBits = 1
-			serialPort?.parity = ORSSerialPortParity.None
-			serialPort?.open()
-			string = "Opening Port \(serialPort!.path) baud: \(serialPort!.baudRate)\n"
+			let localPort = portSelection.selectedItem!.representedObject as? ORSSerialPort
+			
+			println(localPort)
+			// check if port is open in another window
+			if(localPort!.open == false) {
+				serialPort = localPort
+				serialPort?.baudRate = portBaudRate!.titleOfSelectedItem!.toInt()!
+				serialPort?.numberOfStopBits = 1
+				serialPort?.parity = ORSSerialPortParity.None
+				serialPort?.open()
+				string = "Opening Port \(serialPort!.path) baud: \(serialPort!.baudRate)\n"
+			} else {
+
+				let alert = NSAlert()
+				alert.icon				= myMatrixView.imageForMatrixView
+				alert.messageText		= "Port Already In Use!"
+				alert.informativeText	= "\(localPort!.path)\n\nis currently in use, please select another port!"
+				alert.addButtonWithTitle("OK")
+				alert.beginSheetModalForWindow(window!, completionHandler: nil )
+
+			}
 			
 		} else {
 			
@@ -339,6 +363,7 @@ class MainWindowController:	NSWindowController,
 	
 	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int {
 		
+//		println("(\(logicalX), \(logicalY))")
 		return ledStatusArray[logicalX][logicalY]
 
 	}
@@ -378,7 +403,7 @@ class MainWindowController:	NSWindowController,
 	
 	func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange) {
 		
-		if currentConnectionState == matrixConnectionState.connected {
+		if currentConnectionState == .connected {
 			for x in rangeForX.location..<rangeForX.length {
 				for y in rangeForY.location..<rangeForY.length {
 					
@@ -396,9 +421,13 @@ class MainWindowController:	NSWindowController,
 			}
 		}
 		
-		let viewImage = myMatrixView.imageForMatrixView
-		NSApplication.sharedApplication().applicationIconImage = viewImage
+		// Check if in "Code" tab, if so, update code
+//		if(imageCodeTabView.selectedTabViewItem!.label == "Code") {
+//			createCodeFromMatrixView()
+//		}
 		
+		// update dock icon
+		setDockIconAsMatrixView()
 	}
 	
 // MARK: - ORSSerialPortDelegate
@@ -423,9 +452,9 @@ class MainWindowController:	NSWindowController,
 		isPortOpen					= true
 		
 		// set flag to wait for hardware to initalize and set a timer
-		currentConnectionState		= matrixConnectionState.connecting
+		currentConnectionState		= .connecting
 
-		// Set a timer to fire off every 1/2 second sending an ENQ char
+		// Set a timer to fire off every 2 seconds sending an ENQ char
 		// waiting for hardware to respond
 		sendENQTimer = NSTimer.scheduledTimerWithTimeInterval(
 			2,
@@ -458,13 +487,15 @@ class MainWindowController:	NSWindowController,
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortWasClosed(serialPort: ORSSerialPort) {
+		
 		portOpenCloseButton.title	= "Connect"
 		portSelection.enabled		= true
 		portBaudRate.enabled		= true
 		isPortOpen					= false
-		currentConnectionState		= matrixConnectionState.idle
+		currentConnectionState		= .idle
 		sendENQTimer.invalidate()
 		timeoutTimer.invalidate()
+		
 	}
 	
 /*--------------------------------------------------------------------------*\
@@ -506,7 +537,7 @@ class MainWindowController:	NSWindowController,
 		self.serialPort = nil
 		sendENQTimer.invalidate()
 		timeoutTimer.invalidate()
-		currentConnectionState	= matrixConnectionState.idle
+		currentConnectionState	= .idle
 		self.portOpenCloseButton.title = "Connect"
 		
 	}
@@ -532,12 +563,26 @@ class MainWindowController:	NSWindowController,
 	// MARK: - NSWindowDelegate
 	
 	func windowDidBecomeKey(notification: NSNotification) {
-		
-		NSApplication.sharedApplication().applicationIconImage =
-			myMatrixView.imageForMatrixView
-
+		setDockIconAsMatrixView()
 	}
+	
+	// MARK: - NSTabViewDelegate
 
+	func tabView(tabView: NSTabView, willSelectTabViewItem: NSTabViewItem?) {
+		switch(willSelectTabViewItem!.label) {
+//			case "Image":
+//				println("contentview: \(tabView.contentRect) tabViewItem: \(willSelectTabViewItem)")
+//			break
+			
+			case "Code":
+				createCodeFromMatrix()
+			break
+			
+			default:
+			break
+			
+		}
+	}
 	
 	// MARK: - Notifications
 	
@@ -554,14 +599,12 @@ class MainWindowController:	NSWindowController,
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortsWereConnected(notification: NSNotification) {
-
 		
 		if let userInfo = notification.userInfo {
 			let connectedPorts = userInfo[ORSConnectedSerialPortsKey] as! [ORSSerialPort]
 			println("Ports were connected: \(connectedPorts)")
 			
 			for port in connectedPorts {
-				
 				var serialPortMenuItem					= NSMenuItem()
 				serialPortMenuItem.title				= port.name
 				serialPortMenuItem.representedObject	= port
@@ -606,21 +649,19 @@ class MainWindowController:	NSWindowController,
 \*--------------------------------------------------------------------------*/
 	
 	func receivedDataFromHardware(rxData: NSData) {
-		
-//		println(NSString(data: rxData, encoding: NSUTF8StringEncoding)!)
-		
+
 		var rxDataByteArray = [UInt8](count: rxData.length, repeatedValue: 0)
 		rxData.getBytes(&rxDataByteArray, length: rxData.length)
 
 		switch currentConnectionState {
 			
-			case matrixConnectionState.connecting:
+			case .connecting:
 			
 				for rxByte in rxDataByteArray {
 					if rxByte == controlCharACK {
 						timeoutTimer.invalidate()
 						sendENQTimer.invalidate()
-						currentConnectionState = matrixConnectionState.connected
+						currentConnectionState = .connected
 						rxDataByteArray.removeAll(keepCapacity: false)
 						println()
 						println("Connected to matrix, rx'd ACK, refreshing display.")
@@ -631,7 +672,7 @@ class MainWindowController:	NSWindowController,
 				}
 				break
 			
-			case matrixConnectionState.connected:
+			case .connected:
 				for rxByte in rxDataByteArray {
 					print(rxByte.asChar())
 				}
@@ -649,7 +690,7 @@ class MainWindowController:	NSWindowController,
 	
 	func matrixFailedToSync() {
 		println("Failed to connect to matrix")
-		currentConnectionState = matrixConnectionState.idle
+		currentConnectionState = .idle
 		sendENQTimer.invalidate()
 		serialPort!.close()
 	}
@@ -659,6 +700,96 @@ class MainWindowController:	NSWindowController,
 		dataToSend.appendByte(controlCharENQ)
 		serialPort?.sendData(dataToSend)
 		dataToSend.length = 0
+	}
+	
+	// MARK: - Helpers
+	
+	func setDockIconAsMatrixView() {
+
+		NSApplication.sharedApplication().applicationIconImage =
+			myMatrixView.imageForMatrixView
+
+	}
+	
+	func createCodeFromMatrix() {
+		
+		var redByte:		UInt8 = 0
+		var greenByte:		UInt8 = 0
+		
+		var currentByte:	UInt8 = 0
+		
+		let msbSetByte:		UInt8 = 0b10000000
+		
+		var redString:		String	= ""
+		var greenString:	String	= ""
+		
+		var redStringForComment:	String = ""
+		var greenStringForComment:	String = ""
+		
+		codeTextView.textStorage!.mutableString.setString("")
+		codeTextView.editable = true
+
+		codeTextView.insertText("const uint8_t matrix_image[][8] =\n{\n")
+		
+		for y in 0..<myMatrixView.rowCount {
+			
+			// for each row, get values for each coluumn
+			for x in 0..<myMatrixView.columnCount {
+				currentByte = msbSetByte >> UInt8(x)
+				let color = ledStatusArray[x][y]
+				switch(UInt8(color)) {
+					case colorRed:
+						redByte		|= currentByte
+						greenByte	&= ~currentByte
+						redStringForComment		+= "+"
+						greenStringForComment	+= " "
+					break
+					
+					case colorGreen:
+						redByte		&= ~currentByte
+						greenByte	|= currentByte
+						redStringForComment		+= " "
+						greenStringForComment	+= "+"
+					break
+					
+					case colorOrange:
+						redByte		|= currentByte
+						greenByte	|= currentByte
+						redStringForComment		+= "+"
+						greenStringForComment	+= "+"
+					break
+					
+					default:
+						redStringForComment		+= " "
+						greenStringForComment	+= " "
+					break
+				}
+			}
+			redString	+= String(format: "\t\t0x%02X", redByte)
+			greenString	+= String(format: "\t\t0x%02X", greenByte)
+
+			// FIXME: DONT USE (-1)
+			if(y < (myMatrixView.rowCount - 1)) {
+				redString	+= ","
+				greenString += ","
+			}
+			redString	+= "\t// |" + redStringForComment	+ "|\n"
+			greenString	+= "\t// |" + greenStringForComment + "|\n"
+
+			redByte = 0;				greenByte = 0
+			redStringForComment = "";	greenStringForComment = ""
+			
+		}
+		
+		codeTextView.insertText("\t{\t\t\t// RED\n")
+		codeTextView.insertText(redString)
+		codeTextView.insertText("\t},\n")
+		codeTextView.insertText("\t{\t\t\t// GREEN\n")
+		codeTextView.insertText(greenString)
+		codeTextView.insertText("\t}\n")
+		codeTextView.insertText("}\n")
+		codeTextView.editable = false
+
 	}
 
 /*********************** End Window Controller      *************************/
