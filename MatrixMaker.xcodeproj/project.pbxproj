@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D031669A1B61E5F100CA3D95 /* Readme.md in Sources */ = {isa = PBXBuildFile; fileRef = D03166991B61E5F100CA3D95 /* Readme.md */; };
 		D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */; };
 		D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FC1B4253F700E5C088 /* Images.xcassets */; };
 		D03DE70C1B4253F800E5C088 /* MatrixMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */; };
@@ -60,7 +59,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D03166991B61E5F100CA3D95 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = SOURCE_ROOT; };
+		D039CA981B61E9DF00AB1832 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = SOURCE_ROOT; };
 		D03DE6F51B4253F700E5C088 /* MatrixMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MatrixMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D03DE6FC1B4253F700E5C088 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -126,7 +125,7 @@
 		D03DE6F71B4253F700E5C088 /* MatrixMaker */ = {
 			isa = PBXGroup;
 			children = (
-				D03166991B61E5F100CA3D95 /* Readme.md */,
+				D039CA981B61E9DF00AB1832 /* Readme.md */,
 				D0F587821B44CE0200EA0D73 /* images */,
 				D054D7A51B44D0AF00D5EC16 /* GUI */,
 				D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */,
@@ -316,7 +315,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D031669A1B61E5F100CA3D95 /* Readme.md in Sources */,
 				D03DE7171B42549800E5C088 /* MainWindowController.swift in Sources */,
 				D03DE74E1B425D5B00E5C088 /* LEDMatrixView.swift in Sources */,
 				D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */,
