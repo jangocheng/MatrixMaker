@@ -8,11 +8,41 @@
 
 import Cocoa
 
+/*--------------------------------------------------------------------------*\
+ 
+ Protocol:		LEDMatrixViewDelegate
+
+ Required:
+
+ valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
+	returns value from model for pixel at (logicalX, logicalY)
+
+ nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int)
+	inform delegate to update model for pixel at (logicalX, logicalY)
+
+ Optional:
+
+ matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange)
+	inform delgate that the matrix view is changing
+
+\*--------------------------------------------------------------------------*/
+
+
 @objc protocol LEDMatrixViewDelegate {
 	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
 	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int)
 	optional func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange)
 }
+
+/*--------------------------------------------------------------------------*\
+ 
+ Class:			LEDMatrixView: NSView
+
+ Description:	creates an LED matrix view that responds to mouse events in
+				order to change the individual LED pixels
+ 
+\*--------------------------------------------------------------------------*/
+
 
 class LEDMatrixView: NSView {
 	
@@ -31,10 +61,28 @@ class LEDMatrixView: NSView {
 	var matrixViewIsChanging		= false
 	
 	var imageForMatrixView			= NSImage()
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
 
+/***********************  Overrides Methods         *************************/
+//
+// MARK: - Overrides
+//
+
+	// use flipped coordinates to match hardware
 	override var flipped: Bool {
 		return true
 	}
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		override awakeFromNib()
+ 
+ Description:	initalizes pixel image array and image buffer
+ 
+\*--------------------------------------------------------------------------*/
 	
 	override func awakeFromNib() {
 		
@@ -49,6 +97,15 @@ class LEDMatrixView: NSView {
 		imageForMatrixView.size = self.frame.size
 	}
 	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		override drawRect(NSRect)
+ 
+ Description:	draws matrix view to image buffer then draws to view;
+				call delegate if needed
+ 
+\*--------------------------------------------------------------------------*/
+	
     override func drawRect(dirtyRect: NSRect) {
 		
 		// set the NSImage object as the drawing context, flipped
@@ -61,14 +118,14 @@ class LEDMatrixView: NSView {
 			NSBezierPath.fillRect(dirtyRect)
 	
 			// determine the x,y logical cooridinate to start and end;
-			// tihis should be either the entire view, or a single LED
-			// image that needs to be drawn
+			// this should be either the entire view, or a single LED
+			// pixel that needs to be drawn
 			let xStart	= (dirtyRect.origin.x / currentPixelSize)
 			let xEnd	= (xStart + (dirtyRect.size.width / currentPixelSize))
 
 			let yStart	= (dirtyRect.origin.y / currentPixelSize)
 			let yEnd	= (yStart + (dirtyRect.size.height / currentPixelSize))
-			
+		
 			let columnStart = Int(ceil(xStart))
 			let columnEnd	= Int(floor(xEnd))
 			
@@ -83,12 +140,12 @@ class LEDMatrixView: NSView {
 				for y in rowStart..<rowEnd {
 					let pixelFrame = frameForPixelAtLogicalX(x, logicalY: y)
 					
+					// the delegate should always be available except once during
+					// initalization
 					if (self.delegate != nil) {
 						let imageNumber = delegate.valueForMatrixAtLogicalX(x, logicalY: y)
 						imageArray[imageNumber].drawInRect(pixelFrame)
-					} else {
-						let imageNumber = 0
-						imageArray[imageNumber].drawInRect(pixelFrame)
+						
 					}
 				}
 			}
@@ -98,13 +155,14 @@ class LEDMatrixView: NSView {
 		// convert dirtyRect in flipped coordinates to image normal coord's
 		let fromImageRect = convertViewRectToImageRect(dirtyRect, viewSize: self.frame.size)
 		
+		// tell image buffer to draw itself in view
 		imageForMatrixView.drawInRect(
-			dirtyRect,
-			fromRect: fromImageRect,
-			operation: .CompositeCopy,
-			fraction: 1.0,
-			respectFlipped: true,
-			hints: nil
+							dirtyRect,
+			fromRect:		fromImageRect,
+			operation:		.CompositeCopy,
+			fraction:		1.0,
+			respectFlipped:	true,
+			hints:			nil
 			)
 		
 		// only call delegate function if the matrix view is changing
@@ -113,7 +171,15 @@ class LEDMatrixView: NSView {
 			delegate?.matrixViewDidChange!(xRange, rangeForY: yRange)
 		}
 	}
-	
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		override viewDidMoveToSuperview()
+ 
+ Description:	init observer to NSViewFrameDidChange notifcations
+
+\*--------------------------------------------------------------------------*/
+
 	override func viewDidMoveToSuperview() {
 
 		let notificationCenter = NSNotificationCenter.defaultCenter()
@@ -124,45 +190,50 @@ class LEDMatrixView: NSView {
 
 	}
 
+/*********************** Events                    *************************/
+//
+// MARK: - Events
+//
 	
-	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
-	}
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		mouseDown(NSEvent)
+ 
+ Description:	handle mouse down event: update pixel at mouse point
 	
-	func frameResized() {
-		
-		let minEdgeLength		= min(frame.height, frame.width)
-		let pixelSize = (minEdgeLength / CGFloat(columnCount))
-		currentPixelSize = pixelSize
-		imageForMatrixView = NSImage(size: self.frame.size)
-
-	}
-	
-	func refreshMatrix() {
-		matrixViewIsChanging = true
-		needsDisplay = true
-	}
-	
-	// MARK: - Mouse Events
+\*--------------------------------------------------------------------------*/
 
 	override func mouseDown(theEvent: NSEvent) {
 		
 		let pointInView	= convertPoint(theEvent.locationInWindow, fromView: nil)
 		let ledXPos		= Int(floor(pointInView.x / CGFloat(currentPixelSize)))
 		let ledYPos		= Int(floor(pointInView.y / CGFloat(currentPixelSize)))
-				
+		
+		// check that logical pixel # is within range of matrix
 		if ((ledXPos < columnCount) && (ledYPos < rowCount)) &&
 			((ledXPos >= 0) && (ledYPos >= 0)){
 			
+			// tell delegate to update model data
 			delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
+			
+			// update current logical pixel position
 			curXPos			= ledXPos
 			curYPos			= ledYPos
 
+			// redraw view rect for logical pixel
 			let dirtyRect	= frameForPixelAtLogicalX(ledXPos, logicalY: ledYPos)
 			matrixViewIsChanging = true
 			setNeedsDisplayInRect(dirtyRect)
 		}
 	}
+	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		mouseDragged(NSEvent)
+ 
+ Description:	handle mouse down event: update pixels at mouse points
+	
+\*--------------------------------------------------------------------------*/
 	
 	override func mouseDragged(theEvent: NSEvent) {
 		
@@ -170,15 +241,21 @@ class LEDMatrixView: NSView {
 		let ledXPos		= Int(floor(pointInView.x / CGFloat(currentPixelSize)))
 		let ledYPos		= Int(floor(pointInView.y / CGFloat(currentPixelSize)))
 		
+		// check if in new logical pixel frame
 		if (ledXPos != curXPos) || (ledYPos != curYPos) {
 			
+			// check that logical pixel # is within the range of the matrix
 			if ((ledXPos < columnCount) && (ledYPos < rowCount)) &&
 				((ledXPos >= 0) && (ledYPos >= 0)){
 				
+				// tell delegate to update model data
 				delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
+				
+				// update current logical pixel position
 				curXPos	= ledXPos
 				curYPos = ledYPos
 
+				// redraw view rect for logical pixel
 				let dirtyRect = frameForPixelAtLogicalX(ledXPos, logicalY: ledYPos)
 				matrixViewIsChanging = true
 				setNeedsDisplayInRect(dirtyRect)
@@ -186,8 +263,62 @@ class LEDMatrixView: NSView {
 			}
 		}
 	}
+	
+/*********************** Notifications              *************************/
+//
+// MARK: - Notifications
+//
 
-	// MARK: - Drawing
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		frameResized()
+	
+ Description:	called when NSViewFrameDidChangeNotification received;
+				resets pixel size based on new view frame size;
+				resizes matrix image
+ 
+\*--------------------------------------------------------------------------*/
+	
+	func frameResized() {
+		
+		// calculate new pixel size
+		let minEdgeLength		= min(frame.height, frame.width)
+		let pixelSize = (minEdgeLength / CGFloat(columnCount))
+		currentPixelSize = pixelSize
+		
+		// update image buffer size
+		imageForMatrixView.size = self.frame.size
+	}
+
+/*********************** Helpers                    *************************/
+//
+// MARK: - Helpers
+//
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		refreshMatrix()
+ 
+ Description:	tells matrix to redraw it self after model data has changed
+ 
+\*--------------------------------------------------------------------------*/
+	
+	func refreshMatrix() {
+		
+		// matrix has changed, set flag
+		matrixViewIsChanging = true
+		
+		// tell self to re-draw view
+		needsDisplay = true
+	}
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		frameForPixelAtLogicalX(logicalX: Int, logicalY: Int) -> CGRect
+
+ Description:	returns Rect for location to draw a single pixel image
+ 
+\*--------------------------------------------------------------------------*/
 	
 	func frameForPixelAtLogicalX(logicalX: Int, logicalY: Int) -> CGRect {
 
@@ -201,6 +332,15 @@ class LEDMatrixView: NSView {
 		
 	}
 	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		convertViewRectToImageRect(viewRect: NSRect, viewSize: NSSize) -> NSRect
+ 
+ Description:	convert the view's rect.origin from normal to 
+				flipped coordinates
+ 
+\*--------------------------------------------------------------------------*/
+
 	func convertViewRectToImageRect(viewRect: NSRect, viewSize: NSSize) -> NSRect {
 		
 		var imageRect = viewRect
@@ -209,4 +349,7 @@ class LEDMatrixView: NSView {
 		
 	}
 	
+
+/*********************** End LEDMatrixView          *************************/
+
 }

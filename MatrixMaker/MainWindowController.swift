@@ -1,6 +1,19 @@
-//
-//  MainWindowController.swift
-//  MatrixMaker
+/****************************************************************************\
+
+File:			MainWindowController.swift
+
+Date:			1 July 2015
+
+Description:	Window controller for app
+
+Known bugs/missing features:
+
+Modifications:
+Date                Comment
+----    ------------------------------------------------
+
+\****************************************************************************/
+
 //
 //  Created by Justin England on 6/29/15.
 //  Copyright (c) 2015 Justin England. All rights reserved.
@@ -22,6 +35,12 @@ class MainWindowController:	NSWindowController,
 		case connecting		= 1
 		case connected		= 2
 		case disconnecting	= 3
+	}
+	
+	enum pixelColor: UInt8 {
+		case Red	= 1
+		case Green	= 2
+		case Orange	= 3
 	}
 	
 	@IBOutlet weak var myMatrixView:		LEDMatrixView!
@@ -66,10 +85,6 @@ class MainWindowController:	NSWindowController,
 	// command characters
 	let commandCharPlot		= 0xA0 as UInt8
 	
-	let colorRed	= 1 as UInt8
-	let colorGreen	= 2 as UInt8
-	let colorOrange = 3 as UInt8
-	
 	var serialPort: ORSSerialPort? {
 		didSet {
 			println("Setting serialPort: old: \(oldValue) new: \(serialPort)")
@@ -80,15 +95,29 @@ class MainWindowController:	NSWindowController,
 
 		}
 	}
-		
-	override var windowNibName: String {
-		return "MainWindowController"
-	}
-	
+
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
+	
+/***********************  Overrides Methods         *************************/
+//
+// MARK: - Overrides
+//
+	
+	// override NIB name to be loaded
+	override var windowNibName: String {
+		return "MainWindowController"
+	}
 
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		override windowDidLoad()
+ 
+ Description:	initalizes everything needed to display window and views
+ 
+\*--------------------------------------------------------------------------*/
+	
     override func windowDidLoad() {
 
 		super.windowDidLoad()
@@ -102,7 +131,6 @@ class MainWindowController:	NSWindowController,
 		portSettingsDrawer.preferredEdge	= (NSMaxXEdge)
 		
 		// create menu for serial port list
-		// TODO: Change to pull down with 'title' item
 		portSelection.removeAllItems()
 		
 		for port in serialPortManager.availablePorts {
@@ -141,10 +169,16 @@ class MainWindowController:	NSWindowController,
 
 	}
 	
-	// validate the menu items for serial port nspopupbutton
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		override validateMenuItem(menuItem: NSMenuItem) -> Bool
+ 
+ Description:	validate menu items dynamically; checks if port is open, and
+				disables / enables as needed
+	
+\*--------------------------------------------------------------------------*/
+
 	override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-		
-		println("validateMenuItem")
 		
 		// check if action method is for portSelect NSPopUpButton
 		if(menuItem.action == Selector("portSelectMenuClicked:")) {
@@ -161,18 +195,17 @@ class MainWindowController:	NSWindowController,
 		}
 	}
 
-
+/***********************  Action Methods            *************************/
+//
 // MARK: - Actions
+//
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		toolbarNewWindow(sender: AnyObject)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	Action method for "New" toolbar button;
+				called AppDelegate to add new windowcontroller to app
  
 \*--------------------------------------------------------------------------*/
 	
@@ -186,13 +219,10 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		toolbarResetMatrix(sender: AnyObject)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	Action method for "Reset" toolbar button;
+				clears model array and resets matrix view
  
 \*--------------------------------------------------------------------------*/
 	
@@ -208,13 +238,10 @@ class MainWindowController:	NSWindowController,
 
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		toolbarRotateRight(sender: AnyObject)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	Action method for rotate "Right" toolbar button
+				transforms matrix model array to right
  
 \*--------------------------------------------------------------------------*/
 
@@ -250,16 +277,13 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		toolbarRotateRight(sender: AnyObject)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	Action method for rotate "Left" toolbar button
+				transforms matrix model array to left
  
 \*--------------------------------------------------------------------------*/
-	
+
 	@IBAction func toolbarRotateLeft(sender: AnyObject) {
 		
 		let columnCount		= myMatrixView.columnCount
@@ -289,27 +313,24 @@ class MainWindowController:	NSWindowController,
 
 
 /*--------------------------------------------------------------------------*\
+	
+ Function:		connectButtonClicked(sender: NSButton)
  
- Function:
- Author:
- 
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	Action method called when "Connect" button called from drawer;
+				attempts to open selected serial port
  
 \*--------------------------------------------------------------------------*/
-
 	
 	@IBAction func connectButtonClicked(sender: NSButton) {
 		
 		var string = ""
 		
+		// check if portOpen flag is set
 		if isPortOpen == false {
 
+			// check if selected port is not opened in another instance (window)
 			let localPort = portSelection.selectedItem!.representedObject as? ORSSerialPort
 			
-			println(localPort)
 			// check if port is open in another window
 			if(localPort!.open == false) {
 				serialPort = localPort
@@ -319,14 +340,12 @@ class MainWindowController:	NSWindowController,
 				serialPort?.open()
 				string = "Opening Port \(serialPort!.path) baud: \(serialPort!.baudRate)\n"
 			} else {
-
 				let alert = NSAlert()
-				alert.icon				= myMatrixView.imageForMatrixView
+				alert.icon				= NSImage(named: NSImageNameCaution)
 				alert.messageText		= "Port Already In Use!"
-				alert.informativeText	= "\(localPort!.path)\n\nis currently in use, please select another port!"
+				alert.informativeText	= "\"\(localPort!.path)\"\nis currently in use, please select another port!"
 				alert.addButtonWithTitle("OK")
 				alert.beginSheetModalForWindow(window!, completionHandler: nil )
-
 			}
 			
 		} else {
@@ -346,42 +365,38 @@ class MainWindowController:	NSWindowController,
 	@IBAction func portSelectMenuClicked(sender: AnyObject) {
 	}
 
-	
+/*********************** LEDMatrixViewDelegate     **************************/
+//
 // MARK: - LEDMatrixViewDelegate
+//
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
  
- Description:
+ Description:	called when model data value is needed for matrix display
  
- Parameters:	void
- Returns:		void
  
 \*--------------------------------------------------------------------------*/
 	
 	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int {
 		
-//		println("(\(logicalX), \(logicalY))")
+		// return value for pixel at (logicalX, logicalY)
 		return ledStatusArray[logicalX][logicalY]
 
 	}
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	called when model data needs to be updated
  
 \*--------------------------------------------------------------------------*/
 	
 	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) {
 
+		// update model data for pixel location (logicalX, logicalY)
 		ledStatusArray[logicalX][logicalY]++
 		if ledStatusArray[logicalX][logicalY] == myMatrixView.imageArray.count {
 			ledStatusArray[logicalX][logicalY] = 0
@@ -391,18 +406,15 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	called when matrix view has changed
  
 \*--------------------------------------------------------------------------*/
 	
 	func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange) {
 		
+		// if currently connected to hardware, send update to serial port
 		if currentConnectionState == .connected {
 			for x in rangeForX.location..<rangeForX.length {
 				for y in rangeForY.location..<rangeForY.length {
@@ -420,32 +432,28 @@ class MainWindowController:	NSWindowController,
 				}
 			}
 		}
-		
-		// Check if in "Code" tab, if so, update code
-//		if(imageCodeTabView.selectedTabViewItem!.label == "Code") {
-//			createCodeFromMatrixView()
-//		}
-		
+
 		// update dock icon
 		setDockIconAsMatrixView()
 	}
 	
+/*********************** ORSSerialPortDelegate      *************************/
+//
 // MARK: - ORSSerialPortDelegate
+//
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPortWasOpened(serialPort: ORSSerialPort)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	called when requested port is opened;
+				set environment for active open port
  
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortWasOpened(serialPort: ORSSerialPort) {
 		
+		// update UI elements
 		portOpenCloseButton.title	= "Disconnect"
 		portSelection.enabled		= false
 		portBaudRate.enabled		= false
@@ -476,23 +484,22 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
- 
- Description:
- 
- Parameters:	void
- Returns:		void
+ Function:		serialPortWasClosed(serialPort: ORSSerialPort)
+
+ Description:	called when request port is closed
  
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortWasClosed(serialPort: ORSSerialPort) {
 		
+		// update UI elements and flages
 		portOpenCloseButton.title	= "Connect"
 		portSelection.enabled		= true
 		portBaudRate.enabled		= true
 		isPortOpen					= false
 		currentConnectionState		= .idle
+		
+		// cancel timers
 		sendENQTimer.invalidate()
 		timeoutTimer.invalidate()
 		
@@ -500,13 +507,9 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPort(serialPort: ORSSerialPort, didReceiveData data: NSData)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	received data from serial port
  
 \*--------------------------------------------------------------------------*/
 	
@@ -522,18 +525,17 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPortWasRemovedFromSystem(serialPort: ORSSerialPort) {
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	called when current selected serial port is removed;
+				handle as an error condition
+
  
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortWasRemovedFromSystem(serialPort: ORSSerialPort) {
 
+		// TODO: NSAlert for port removed
 		self.serialPort = nil
 		sendENQTimer.invalidate()
 		timeoutTimer.invalidate()
@@ -544,30 +546,55 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPort(serialPort: ORSSerialPort, didEncounterError error: NSError)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	handle serial port errors
  
 \*--------------------------------------------------------------------------*/
 	
 	func serialPort(serialPort: ORSSerialPort, didEncounterError error: NSError) {
 		
+		// TODO: NSAlert for serialPort error
 		println("SerialPort \(serialPort) encountered an error: \(error)")
 		
 	}
+
+/*********************** NSWindowDelegate           *************************/
+//
+// MARK: - NSWindowDelegate
+//
 	
-	// MARK: - NSWindowDelegate
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		windowDidBecomeKey(notification: NSNotification)
+ 
+ Description:	sets app dock icon to match key window
+ 
+\*--------------------------------------------------------------------------*/
+
 	
 	func windowDidBecomeKey(notification: NSNotification) {
 		setDockIconAsMatrixView()
 	}
-	
-	// MARK: - NSTabViewDelegate
 
+/*********************** NSTabViewDelegate          *************************/
+//
+// MARK: - NSTabViewDelegate
+//
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		tabview(tabView: NSTabView, 
+						willSelectTabViewItem: NSTabViewItem?)
+ 
+ Description:	delegate called when new tab view selected;
+				processes new tab as needed
+ 
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+
+	
 	func tabView(tabView: NSTabView, willSelectTabViewItem: NSTabViewItem?) {
 		switch(willSelectTabViewItem!.label) {
 //			case "Image":
@@ -584,17 +611,16 @@ class MainWindowController:	NSWindowController,
 		}
 	}
 	
-	// MARK: - Notifications
+/*********************** ORSSerialPortNotifications *************************/
+//
+// MARK: - ORSSerialPort Notifications
+//
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPortsWereConnected(notification: NSNotification)
  
- Description:
- 
- Parameters:	void
- Returns:		void
+ Description:	called when ports added to system; adds ports to menu
  
 \*--------------------------------------------------------------------------*/
 	
@@ -615,14 +641,10 @@ class MainWindowController:	NSWindowController,
 	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		serialPortsWereDisconnected(notification: NSNotification)
  
- Description:
- 
- Parameters:	void
- Returns:		void
- 
+ Description:	called when ports removed from system; remove ports from menu
+	
 \*--------------------------------------------------------------------------*/
 	
 	func serialPortsWereDisconnected(notification: NSNotification) {
@@ -635,58 +657,24 @@ class MainWindowController:	NSWindowController,
 			}
 		}
 	}
-
+	
+/*********************** Timers                    *************************/
+//
+// MARK: - Timers
+//
+	
 /*--------------------------------------------------------------------------*\
  
- Function:
- Author:
+ Function:		matrixFailedToSync()
  
- Description:
+ Description:	called from timer - if ACK not received from matrix,
+				gracefully fail to connect
  
  Parameters:	void
  Returns:		void
  
 \*--------------------------------------------------------------------------*/
-	
-	func receivedDataFromHardware(rxData: NSData) {
 
-		var rxDataByteArray = [UInt8](count: rxData.length, repeatedValue: 0)
-		rxData.getBytes(&rxDataByteArray, length: rxData.length)
-
-		switch currentConnectionState {
-			
-			case .connecting:
-			
-				for rxByte in rxDataByteArray {
-					if rxByte == controlCharACK {
-						timeoutTimer.invalidate()
-						sendENQTimer.invalidate()
-						currentConnectionState = .connected
-						rxDataByteArray.removeAll(keepCapacity: false)
-						println()
-						println("Connected to matrix, rx'd ACK, refreshing display.")
-						myMatrixView.refreshMatrix()
-					} else {
-						print(rxByte.asChar())
-					}
-				}
-				break
-			
-			case .connected:
-				for rxByte in rxDataByteArray {
-					print(rxByte.asChar())
-				}
-				break
-			
-			default:
-				break
-			
-		}
-
-	}
-	
-	
-	// MARK: - Timers
 	
 	func matrixFailedToSync() {
 		println("Failed to connect to matrix")
@@ -695,14 +683,41 @@ class MainWindowController:	NSWindowController,
 		serialPort!.close()
 	}
 	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		sendENQToSyncMatrix()
+ 
+ Description:	called from timer - sends ENQ char to open serial port
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+
+	
 	func sendENQToSyncMatrix() {
 		println("Sending ENQ Char.....")
 		dataToSend.appendByte(controlCharENQ)
 		serialPort?.sendData(dataToSend)
 		dataToSend.length = 0
 	}
+
+/*********************** Helpers                    *************************/
+//
+// MARK: - Helpers
+//
 	
-	// MARK: - Helpers
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		setDockIconAsMatrixView()
+ 
+ Description:	retreives image buffer from matrix view and sets as dock icon
+ 
+ Parameters:	void
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+
 	
 	func setDockIconAsMatrixView() {
 
@@ -711,6 +726,62 @@ class MainWindowController:	NSWindowController,
 
 	}
 	
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		receivedDataFromHardware(rxData: NSData)
+ 
+ Description:	processes incoming data from serial port
+ 
+ Parameters:	rxData - data received
+ Returns:		void
+ 
+\*--------------------------------------------------------------------------*/
+	
+	func receivedDataFromHardware(rxData: NSData) {
+		
+		var rxDataByteArray = [UInt8](count: rxData.length, repeatedValue: 0)
+		rxData.getBytes(&rxDataByteArray, length: rxData.length)
+		
+		switch currentConnectionState {
+			
+		case .connecting:
+			
+			for rxByte in rxDataByteArray {
+				if rxByte == controlCharACK {
+					timeoutTimer.invalidate()
+					sendENQTimer.invalidate()
+					currentConnectionState = .connected
+					rxDataByteArray.removeAll(keepCapacity: false)
+					println()
+					println("Connected to matrix, rx'd ACK, refreshing display.")
+					myMatrixView.refreshMatrix()
+				} else {
+					print(rxByte.asChar())
+				}
+			}
+			break
+			
+		case .connected:
+			for rxByte in rxDataByteArray {
+				print(rxByte.asChar())
+			}
+			break
+			
+		default:
+			break
+			
+		}
+		
+	}
+
+/*--------------------------------------------------------------------------*\
+ 
+ Function:		createCodeFromMatrix()
+ 
+ Description:	creates the 'C' code array that describes the matrix view
+
+\*--------------------------------------------------------------------------*/
+
 	func createCodeFromMatrix() {
 		
 		var redByte:		UInt8 = 0
@@ -738,21 +809,21 @@ class MainWindowController:	NSWindowController,
 				currentByte = msbSetByte >> UInt8(x)
 				let color = ledStatusArray[x][y]
 				switch(UInt8(color)) {
-					case colorRed:
+					case pixelColor.Red.rawValue:
 						redByte		|= currentByte
 						greenByte	&= ~currentByte
 						redStringForComment		+= "+"
 						greenStringForComment	+= " "
 					break
 					
-					case colorGreen:
+					case pixelColor.Green.rawValue:
 						redByte		&= ~currentByte
 						greenByte	|= currentByte
 						redStringForComment		+= " "
 						greenStringForComment	+= "+"
 					break
 					
-					case colorOrange:
+					case pixelColor.Orange.rawValue:
 						redByte		|= currentByte
 						greenByte	|= currentByte
 						redStringForComment		+= "+"
