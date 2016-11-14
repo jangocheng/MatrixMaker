@@ -78,16 +78,18 @@ class MainWindowController:	NSWindowController,
 */
 	
 	// protocol and control characters
-	let controlCharSTX		= 0x02 as UInt8
-	let controlCharENQ		= 0x05 as UInt8
-	let controlCharACK		= 0x06 as UInt8
+    let controlCharSTX: UInt8   = 0x02
+    let controlCharENQ: UInt8   = 0x05
+    let controlCharACK: UInt8   = 0x06
 	
 	// command characters
 	let commandCharPlot		= 0xA0 as UInt8
 	
+	var selectedSerialPort: ORSSerialPort?
+	
 	var serialPort: ORSSerialPort? {
 		didSet {
-			println("Setting serialPort: old: \(oldValue) new: \(serialPort)")
+			print("Setting serialPort: old: \(oldValue) new: \(serialPort)")
 			oldValue?.close()
 			oldValue?.delegate						= nil
 			serialPort?.delegate					= self
@@ -121,32 +123,31 @@ class MainWindowController:	NSWindowController,
     override func windowDidLoad() {
 
 		super.windowDidLoad()
-		
+				
 		myMatrixView!.delegate				= self
 		imageCodeTabView!.delegate			= self
 		
-		let myFont = NSFont.userFixedPitchFontOfSize(CGFloat(12))
-		codeTextView.font = myFont!
+		window!.standardWindowButton(.ZoomButton)!.hidden = true
+		codeTextView.font = NSFont.userFixedPitchFontOfSize(CGFloat(12))
 
-		portSettingsDrawer.preferredEdge	= (NSMaxXEdge)
+		portSettingsDrawer.preferredEdge	= (NSRectEdge.MaxX)
 		
 		// create menu for serial port list
-		portSelection.removeAllItems()
-		
-		for port in serialPortManager.availablePorts {
-			
-			let currentPort = port as! ORSSerialPort
-			var portSelectionMenuItem = NSMenuItem()
-			
-			portSelectionMenuItem.title = currentPort.name
-			portSelectionMenuItem.representedObject = currentPort
-			
-			if(currentPort.open == true) {
-				portSelectionMenuItem.enabled = false
-			}
-		
-			portSelection.menu!.addItem(portSelectionMenuItem)
-		}
+//		portSelection.removeAllItems()
+//		for port in serialPortManager.availablePorts {
+//			
+//			let currentPort = port as! ORSSerialPort
+//			var portSelectionMenuItem = NSMenuItem()
+//			
+//			portSelectionMenuItem.title = currentPort.name
+//			portSelectionMenuItem.representedObject = currentPort
+//			
+//			if(currentPort.open == true) {
+//				portSelectionMenuItem.enabled = false
+//			}
+//		
+//			portSelection.menu!.addItem(portSelectionMenuItem)
+//		}
 		
 		portBaudRate.selectItemWithTitle("1000000")
 		
@@ -154,12 +155,12 @@ class MainWindowController:	NSWindowController,
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		
 		notificationCenter.addObserver(self,
-			selector:   "serialPortsWereConnected:",
+			selector:   #selector(MainWindowController.serialPortsWereConnected(_:)),
 			name:       ORSSerialPortsWereConnectedNotification,
 			object:     nil)
 		
 		notificationCenter.addObserver(self,
-			selector:   "serialPortsWereDisconnected:",
+			selector:   #selector(MainWindowController.serialPortsWereDisconnected(_:)),
 			name:       ORSSerialPortsWereDisconnectedNotification,
 			object:     nil)
 		
@@ -181,7 +182,7 @@ class MainWindowController:	NSWindowController,
 	override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
 		
 		// check if action method is for portSelect NSPopUpButton
-		if(menuItem.action == Selector("portSelectMenuClicked:")) {
+		if(menuItem.action == #selector(MainWindowController.portSelectMenuClicked(_:))) {
 			let serialPortItem = menuItem.representedObject as! ORSSerialPort
 			// check if port is open, if so, then disable menu item
 			if(serialPortItem.open == true) {
@@ -330,11 +331,12 @@ class MainWindowController:	NSWindowController,
 
 			// check if selected port is not opened in another instance (window)
 			let localPort = portSelection.selectedItem!.representedObject as? ORSSerialPort
+//			let localPort = selectedSerialPort
 			
 			// check if port is open in another window
 			if(localPort!.open == false) {
 				serialPort = localPort
-				serialPort?.baudRate = portBaudRate!.titleOfSelectedItem!.toInt()!
+				serialPort?.baudRate = Int(portBaudRate!.titleOfSelectedItem!)!
 				serialPort?.numberOfStopBits = 1
 				serialPort?.parity = ORSSerialPortParity.None
 				serialPort?.open()
@@ -355,7 +357,7 @@ class MainWindowController:	NSWindowController,
 			
 		}
 		
-		println(string)
+		print(string)
 		
 	}
 	
@@ -397,7 +399,7 @@ class MainWindowController:	NSWindowController,
 	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) {
 
 		// update model data for pixel location (logicalX, logicalY)
-		ledStatusArray[logicalX][logicalY]++
+		ledStatusArray[logicalX][logicalY] += 1
 		if ledStatusArray[logicalX][logicalY] == myMatrixView.imageArray.count {
 			ledStatusArray[logicalX][logicalY] = 0
 		}
@@ -418,17 +420,13 @@ class MainWindowController:	NSWindowController,
 		if currentConnectionState == .connected {
 			for x in rangeForX.location..<rangeForX.length {
 				for y in rangeForY.location..<rangeForY.length {
-					
-//					println("serial data for (\(x),\(y)): \(ledStatusArray[x][y])")
-//					println("X:" + (NSString(format:"%i", x) as String))
-//					println("Y:" + (NSString(format:"%i", y) as String))
-//					println("C:" + (NSString(format:"%i", ledStatusArray[x][y]) as String) + "\n")
 
 					dataToSend.appendByte(UInt8(x))
 					dataToSend.appendByte(UInt8(y))
 					dataToSend.appendByte(UInt8(ledStatusArray[x][y]))
 					serialPort?.sendData(dataToSend)
 					dataToSend.length = 0
+                    
 				}
 			}
 		}
@@ -467,7 +465,7 @@ class MainWindowController:	NSWindowController,
 		sendENQTimer = NSTimer.scheduledTimerWithTimeInterval(
 			2,
 			target:		self,
-			selector:	Selector("sendENQToSyncMatrix"),
+			selector:	#selector(MainWindowController.sendENQToSyncMatrix),
 			userInfo:	nil,
 			repeats:	true)
 		
@@ -476,7 +474,7 @@ class MainWindowController:	NSWindowController,
 		timeoutTimer = NSTimer.scheduledTimerWithTimeInterval(
 			10,
 			target:self,
-			selector: Selector("matrixFailedToSync"),
+			selector: #selector(MainWindowController.matrixFailedToSync),
 			userInfo: nil,
 			repeats: false)
 		
@@ -555,7 +553,8 @@ class MainWindowController:	NSWindowController,
 	func serialPort(serialPort: ORSSerialPort, didEncounterError error: NSError) {
 		
 		// TODO: NSAlert for serialPort error
-		println("SerialPort \(serialPort) encountered an error: \(error)")
+		presentError(error)
+		print("SerialPort \(serialPort) encountered an error: \(error)")
 		
 	}
 
@@ -589,9 +588,7 @@ class MainWindowController:	NSWindowController,
  
  Description:	delegate called when new tab view selected;
 				processes new tab as needed
- 
- Returns:		void
- 
+	
 \*--------------------------------------------------------------------------*/
 
 	
@@ -628,14 +625,14 @@ class MainWindowController:	NSWindowController,
 		
 		if let userInfo = notification.userInfo {
 			let connectedPorts = userInfo[ORSConnectedSerialPortsKey] as! [ORSSerialPort]
-			println("Ports were connected: \(connectedPorts)")
+			print("Ports were connected: \(connectedPorts)")
 			
-			for port in connectedPorts {
-				var serialPortMenuItem					= NSMenuItem()
-				serialPortMenuItem.title				= port.name
-				serialPortMenuItem.representedObject	= port
-				portSelection.menu?.addItem(serialPortMenuItem)
-			}
+//			for port in connectedPorts {
+//				var serialPortMenuItem					= NSMenuItem()
+//				serialPortMenuItem.title				= port.name
+//				serialPortMenuItem.representedObject	= port
+//				portSelection.menu?.addItem(serialPortMenuItem)
+//			}
 		}
 	}
 	
@@ -650,11 +647,11 @@ class MainWindowController:	NSWindowController,
 	func serialPortsWereDisconnected(notification: NSNotification) {
 		if let userInfo = notification.userInfo {
 			let disconnectedPorts: [ORSSerialPort] = userInfo[ORSDisconnectedSerialPortsKey] as! [ORSSerialPort]
-			println("Ports were disconnected: \(disconnectedPorts)")
+			print("Ports were disconnected: \(disconnectedPorts)")
 			
-			for port in disconnectedPorts {
-				portSelection.removeItemWithTitle(port.name)
-			}
+//			for port in disconnectedPorts {
+//				portSelection.removeItemWithTitle(port.name)
+//			}
 		}
 	}
 	
@@ -670,14 +667,11 @@ class MainWindowController:	NSWindowController,
  Description:	called from timer - if ACK not received from matrix,
 				gracefully fail to connect
  
- Parameters:	void
- Returns:		void
- 
 \*--------------------------------------------------------------------------*/
 
 	
 	func matrixFailedToSync() {
-		println("Failed to connect to matrix")
+		print("Failed to connect to matrix")
 		currentConnectionState = .idle
 		sendENQTimer.invalidate()
 		serialPort!.close()
@@ -689,14 +683,11 @@ class MainWindowController:	NSWindowController,
  
  Description:	called from timer - sends ENQ char to open serial port
  
- Parameters:	void
- Returns:		void
- 
 \*--------------------------------------------------------------------------*/
 
 	
 	func sendENQToSyncMatrix() {
-		println("Sending ENQ Char.....")
+		print("Sending ENQ Char.....")
 		dataToSend.appendByte(controlCharENQ)
 		serialPort?.sendData(dataToSend)
 		dataToSend.length = 0
@@ -713,9 +704,6 @@ class MainWindowController:	NSWindowController,
  
  Description:	retreives image buffer from matrix view and sets as dock icon
  
- Parameters:	void
- Returns:		void
- 
 \*--------------------------------------------------------------------------*/
 
 	
@@ -731,10 +719,7 @@ class MainWindowController:	NSWindowController,
  Function:		receivedDataFromHardware(rxData: NSData)
  
  Description:	processes incoming data from serial port
- 
- Parameters:	rxData - data received
- Returns:		void
- 
+  
 \*--------------------------------------------------------------------------*/
 	
 	func receivedDataFromHardware(rxData: NSData) {
@@ -752,18 +737,18 @@ class MainWindowController:	NSWindowController,
 					sendENQTimer.invalidate()
 					currentConnectionState = .connected
 					rxDataByteArray.removeAll(keepCapacity: false)
-					println()
-					println("Connected to matrix, rx'd ACK, refreshing display.")
+					print("")
+					print("Connected to matrix, rx'd ACK, refreshing display.")
 					myMatrixView.refreshMatrix()
 				} else {
-					print(rxByte.asChar())
+					print(rxByte.asChar(), terminator: "")
 				}
 			}
 			break
 			
 		case .connected:
 			for rxByte in rxDataByteArray {
-				print(rxByte.asChar())
+				print(rxByte.asChar(), terminator: "")
 			}
 			break
 			
@@ -781,6 +766,8 @@ class MainWindowController:	NSWindowController,
  Description:	creates the 'C' code array that describes the matrix view
 
 \*--------------------------------------------------------------------------*/
+	
+	//TODO: Return string representation
 
 	func createCodeFromMatrix() {
 		
@@ -812,7 +799,7 @@ class MainWindowController:	NSWindowController,
 					case pixelColor.Red.rawValue:
 						redByte		|= currentByte
 						greenByte	&= ~currentByte
-						redStringForComment		+= "+"
+						redStringForComment		+= "•"
 						greenStringForComment	+= " "
 					break
 					
@@ -820,14 +807,14 @@ class MainWindowController:	NSWindowController,
 						redByte		&= ~currentByte
 						greenByte	|= currentByte
 						redStringForComment		+= " "
-						greenStringForComment	+= "+"
+						greenStringForComment	+= "•"
 					break
 					
 					case pixelColor.Orange.rawValue:
 						redByte		|= currentByte
 						greenByte	|= currentByte
-						redStringForComment		+= "+"
-						greenStringForComment	+= "+"
+						redStringForComment		+= "•"
+						greenStringForComment	+= "•"
 					break
 					
 					default:
@@ -860,6 +847,9 @@ class MainWindowController:	NSWindowController,
 		codeTextView.insertText("\t}\n")
 		codeTextView.insertText("}\n")
 		codeTextView.editable = false
+		
+//		let panel = NSSavePanel()
+//		panel.beginSheetModalForWindow(<#window: NSWindow#>, completionHandler: <#(Int) -> Void##(Int) -> Void#>)
 
 	}
 

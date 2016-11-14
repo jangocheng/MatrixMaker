@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D039CA9A1B64901300AB1832 /* ORSSerial.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D07D9EBE1B4385F800548C61 /* ORSSerial.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D03DE6FB1B4253F700E5C088 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE6FA1B4253F700E5C088 /* AppDelegate.swift */; };
 		D03DE6FD1B4253F700E5C088 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D03DE6FC1B4253F700E5C088 /* Images.xcassets */; };
 		D03DE70C1B4253F800E5C088 /* MatrixMakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03DE70B1B4253F800E5C088 /* MatrixMakerTests.swift */; };
@@ -52,6 +53,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D039CA9A1B64901300AB1832 /* ORSSerial.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,7 +235,9 @@
 		D03DE6ED1B4253F700E5C088 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Justin England";
 				TargetAttributes = {
 					D03DE6F41B4253F700E5C088 = {
@@ -362,6 +366,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -380,6 +385,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DDEBUG";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -429,6 +435,7 @@
 				INFOPLIST_FILE = "MatrixMaker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.getoffmyhack.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -441,6 +448,7 @@
 				INFOPLIST_FILE = "MatrixMaker/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.getoffmyhack.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -460,6 +468,7 @@
 				);
 				INFOPLIST_FILE = MatrixMakerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.getoffmyhack.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MatrixMaker.app/Contents/MacOS/MatrixMaker";
 			};
@@ -476,6 +485,7 @@
 				);
 				INFOPLIST_FILE = MatrixMakerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.getoffmyhack.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MatrixMaker.app/Contents/MacOS/MatrixMaker";
 			};

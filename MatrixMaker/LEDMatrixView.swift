@@ -29,9 +29,11 @@ import Cocoa
 
 
 @objc protocol LEDMatrixViewDelegate {
-	func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
+
+    func valueForMatrixAtLogicalX(logicalX: Int, logicalY: Int) -> Int
 	func nextValueForMatrixAtLogicalX(logicalX: Int, logicalY: Int)
 	optional func matrixViewDidChange(rangeForX: NSRange, rangeForY: NSRange)
+    
 }
 
 /*--------------------------------------------------------------------------*\
@@ -48,19 +50,19 @@ class LEDMatrixView: NSView {
 	
 	var imageArray: [NSImage] = []
 
-	var columnCount		= 8
-	var rowCount		= 8
+	var columnCount			= 8
+	var rowCount			= 8
 	
-	var curXPos			= 0
-	var curYPos			= 0
+	var currentXPosition	= 0
+	var currentYPosition	= 0
 	
-	var currentPixelSize		= 48.0	as CGFloat
+	var currentPixelSize	= 48.0	as CGFloat
+	
+	var matrixViewIsChanging	= false
+	
+	var imageForMatrixView		= NSImage()
 	
 	var delegate: LEDMatrixViewDelegate! = nil
-	
-	var matrixViewIsChanging		= false
-	
-	var imageForMatrixView			= NSImage()
 	
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -87,14 +89,21 @@ class LEDMatrixView: NSView {
 	override func awakeFromNib() {
 		
 		imageArray = [
+		
 			(NSImage(named: "led_off.png")!),
 			(NSImage(named: "led_red.png")!),
 			(NSImage(named: "led_green.png")!),
 			(NSImage(named: "led_orange.png")!)
+//			(NSImage(named: NSImageNameStatusNone)!),
+//			(NSImage(named: NSImageNameStatusUnavailable)!),
+//			(NSImage(named: NSImageNameStatusAvailable)!),
+//			(NSImage(named: NSImageNameStatusPartiallyAvailable)!),
+
 		]
 		
 		// initalize image buffer
 		imageForMatrixView.size = self.frame.size
+
 	}
 	
 /*--------------------------------------------------------------------------*\
@@ -102,16 +111,16 @@ class LEDMatrixView: NSView {
  Function:		override drawRect(NSRect)
  
  Description:	draws matrix view to image buffer then draws to view;
-				call delegate if needed
+				calls delegate if needed
  
 \*--------------------------------------------------------------------------*/
 	
     override func drawRect(dirtyRect: NSRect) {
-		
+	
 		// set the NSImage object as the drawing context, flipped
 		// to match the hardware cooridnate origin
 		imageForMatrixView.lockFocusFlipped(true)
-
+		
 			// draw background
 			let backgroundColor = NSColor.darkGrayColor()
 			backgroundColor.set()
@@ -146,14 +155,18 @@ class LEDMatrixView: NSView {
 						let imageNumber = delegate.valueForMatrixAtLogicalX(x, logicalY: y)
 						imageArray[imageNumber].drawInRect(pixelFrame)
 						
+					} else {
+						let imageNumber = 0
+						imageArray[imageNumber].drawInRect(pixelFrame)
 					}
 				}
 			}
 		
+		// done drawing matrix in image buffer
 		imageForMatrixView.unlockFocus()
-
+		
 		// convert dirtyRect in flipped coordinates to image normal coord's
-		let fromImageRect = convertViewRectToImageRect(dirtyRect, viewSize: self.frame.size)
+		let fromImageRect = convertViewRectToImageRect(dirtyRect)
 		
 		// tell image buffer to draw itself in view
 		imageForMatrixView.drawInRect(
@@ -184,7 +197,7 @@ class LEDMatrixView: NSView {
 
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		notificationCenter.addObserver(self,
-			selector:   "frameResized",
+			selector:   #selector(LEDMatrixView.frameResized),
 			name:       NSViewFrameDidChangeNotification,
 			object:     self.window)
 
@@ -217,8 +230,8 @@ class LEDMatrixView: NSView {
 			delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
 			
 			// update current logical pixel position
-			curXPos			= ledXPos
-			curYPos			= ledYPos
+			currentXPosition			= ledXPos
+			currentYPosition			= ledYPos
 
 			// redraw view rect for logical pixel
 			let dirtyRect	= frameForPixelAtLogicalX(ledXPos, logicalY: ledYPos)
@@ -242,7 +255,7 @@ class LEDMatrixView: NSView {
 		let ledYPos		= Int(floor(pointInView.y / CGFloat(currentPixelSize)))
 		
 		// check if in new logical pixel frame
-		if (ledXPos != curXPos) || (ledYPos != curYPos) {
+		if (ledXPos != currentXPosition) || (ledYPos != currentYPosition) {
 			
 			// check that logical pixel # is within the range of the matrix
 			if ((ledXPos < columnCount) && (ledYPos < rowCount)) &&
@@ -252,8 +265,8 @@ class LEDMatrixView: NSView {
 				delegate.nextValueForMatrixAtLogicalX(ledXPos, logicalY: ledYPos)
 				
 				// update current logical pixel position
-				curXPos	= ledXPos
-				curYPos = ledYPos
+				currentXPosition	= ledXPos
+				currentYPosition	= ledYPos
 
 				// redraw view rect for logical pixel
 				let dirtyRect = frameForPixelAtLogicalX(ledXPos, logicalY: ledYPos)
@@ -320,7 +333,7 @@ class LEDMatrixView: NSView {
  
 \*--------------------------------------------------------------------------*/
 	
-	func frameForPixelAtLogicalX(logicalX: Int, logicalY: Int) -> CGRect {
+	func frameForPixelAtLogicalX(logicalX: Int, logicalY: Int) -> NSRect {
 
 		let width	= currentPixelSize
 		let height	= currentPixelSize
@@ -328,7 +341,7 @@ class LEDMatrixView: NSView {
 		let x		= width  * CGFloat(logicalX)
 		let y		= height * CGFloat(logicalY)
 
-		return CGRect(x: x, y: y, width: width, height: height)
+		return NSRect(x: x, y: y, width: width, height: height)
 		
 	}
 	
@@ -341,8 +354,9 @@ class LEDMatrixView: NSView {
  
 \*--------------------------------------------------------------------------*/
 
-	func convertViewRectToImageRect(viewRect: NSRect, viewSize: NSSize) -> NSRect {
+	func convertViewRectToImageRect(viewRect: NSRect) -> NSRect {
 		
+		let viewSize = self.frame.size
 		var imageRect = viewRect
 		imageRect.origin.y = ((viewSize.height - viewRect.origin.y) - viewRect.size.height)
 		return imageRect

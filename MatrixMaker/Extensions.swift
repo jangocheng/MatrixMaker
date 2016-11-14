@@ -9,7 +9,8 @@
 import Foundation
 
 extension NSMutableData {
-	func appendByte(var b: UInt8) {
+	func appendByte( b: UInt8) {
+        var b = b
 		self.appendBytes(&b, length: 1)
 	}
 }

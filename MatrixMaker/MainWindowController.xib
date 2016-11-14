@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MainWindowController" customModule="MatrixMaker" customModuleProvider="target">
@@ -40,7 +41,7 @@
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="i2k-yl-yUT" customClass="LEDMatrixView" customModule="MatrixMaker" customModuleProvider="target">
                                             <rect key="frame" x="5" y="5" width="384" height="384"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" secondItem="i2k-yl-yUT" secondAttribute="height" multiplier="1:1" id="jPa-PR-tCl"/>
+                                                <constraint firstAttribute="width" secondItem="i2k-yl-yUT" secondAttribute="height" multiplier="1:1" id="A4U-1R-AUU"/>
                                             </constraints>
                                         </customView>
                                     </subviews>
@@ -60,11 +61,11 @@
                                         <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HO4-At-bBY">
                                             <rect key="frame" x="5" y="5" width="384" height="384"/>
                                             <clipView key="contentView" id="ABC-EQ-Bsm">
-                                                <rect key="frame" x="1" y="1" width="223" height="133"/>
+                                                <rect key="frame" x="1" y="1" width="382" height="382"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" findStyle="panel" verticallyResizable="YES" allowsNonContiguousLayout="YES" id="L18-cI-JEX">
-                                                        <rect key="frame" x="0.0" y="0.0" width="223" height="382"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="382" height="382"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <size key="minSize" width="382" height="382"/>
@@ -77,14 +78,14 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </clipView>
                                             <constraints>
-                                                <constraint firstAttribute="width" secondItem="HO4-At-bBY" secondAttribute="height" multiplier="1:1" id="QE9-Cx-DJ5"/>
+                                                <constraint firstAttribute="width" secondItem="HO4-At-bBY" secondAttribute="height" multiplier="1:1" id="97h-iL-lqq"/>
                                             </constraints>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="ozB-0F-tV6">
                                                 <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ayr-10-fKb">
-                                                <rect key="frame" x="224" y="1" width="15" height="133"/>
+                                                <rect key="frame" x="367" y="1" width="16" height="382"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
@@ -150,7 +151,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-60" y="324"/>
+            <point key="canvasLocation" x="-60" y="481"/>
         </window>
         <drawer trailingOffset="15" id="zXC-Wf-cTF">
             <size key="contentSize" width="100" height="100"/>
@@ -161,11 +162,11 @@
             </connections>
         </drawer>
         <customView id="Pma-aW-dmp" userLabel="Drawer Content View">
-            <rect key="frame" x="0.0" y="5" width="225" height="184"/>
+            <rect key="frame" x="0.0" y="0.0" width="225" height="378"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Zr-MO-EXa">
-                    <rect key="frame" x="18" y="58" width="190" height="26"/>
+                    <rect key="frame" x="18" y="252" width="190" height="26"/>
                     <popUpButtonCell key="cell" type="push" title="Select Baud Rate" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="5Sk-fY-OZR" id="KSS-Wo-bdx">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -182,7 +183,7 @@
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IhL-kp-VlK">
-                    <rect key="frame" x="18" y="90" width="73" height="17"/>
+                    <rect key="frame" x="18" y="284" width="70" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Baud Rate:" id="Pe6-mX-Gph">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -190,7 +191,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QQV-De-Do4">
-                    <rect key="frame" x="18" y="147" width="73" height="17"/>
+                    <rect key="frame" x="18" y="341" width="71" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Serial Port:" id="uFL-xN-za7">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -198,7 +199,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="749" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="X2P-1U-dti">
-                    <rect key="frame" x="18" y="112" width="190" height="26"/>
+                    <rect key="frame" x="18" y="306" width="190" height="26"/>
                     <popUpButtonCell key="cell" type="push" title="Select Serial Port:" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="b3L-td-rjk" id="ivJ-J7-ZEQ">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -212,10 +213,12 @@
                     </popUpButtonCell>
                     <connections>
                         <action selector="portSelectMenuClicked:" target="-2" id="7Qm-j2-0hA"/>
+                        <binding destination="-2" name="content" keyPath="serialPortManager.availablePorts" id="gI4-8D-KK4"/>
+                        <binding destination="-2" name="contentValues" keyPath="serialPortManager.availablePorts.name" previousBinding="gI4-8D-KK4" id="k12-uw-E3f"/>
                     </connections>
                 </popUpButton>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hsW-0l-s3T">
-                    <rect key="frame" x="14" y="13" width="197" height="32"/>
+                    <rect key="frame" x="14" y="207" width="197" height="32"/>
                     <buttonCell key="cell" type="push" title="Connect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XYQ-K8-Oil">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -227,6 +230,16 @@ DQ
                         <action selector="connectButtonClicked:" target="-2" id="16H-Uf-LTP"/>
                     </connections>
                 </button>
+                <box autoresizesSubviews="NO" title="Status:" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="7mW-v8-mf3">
+                    <rect key="frame" x="7" y="16" width="211" height="178"/>
+                    <view key="contentView" id="mLn-sx-Nhh">
+                        <rect key="frame" x="1" y="1" width="209" height="159"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <font key="titleFont" metaFont="system"/>
+                </box>
             </subviews>
             <constraints>
                 <constraint firstItem="IhL-kp-VlK" firstAttribute="leading" secondItem="Pma-aW-dmp" secondAttribute="leading" constant="20" id="04W-Bp-HkS"/>
@@ -235,15 +248,19 @@ DQ
                 <constraint firstItem="6Zr-MO-EXa" firstAttribute="top" secondItem="IhL-kp-VlK" secondAttribute="bottom" constant="8" id="7yb-YQ-HSY"/>
                 <constraint firstItem="X2P-1U-dti" firstAttribute="top" secondItem="QQV-De-Do4" secondAttribute="bottom" constant="11" id="9X8-Ag-zXI"/>
                 <constraint firstAttribute="trailing" secondItem="X2P-1U-dti" secondAttribute="trailing" constant="20" id="Jij-LW-RQo"/>
+                <constraint firstItem="7mW-v8-mf3" firstAttribute="top" secondItem="hsW-0l-s3T" secondAttribute="bottom" constant="20" id="UZk-Fe-lsS"/>
                 <constraint firstItem="hsW-0l-s3T" firstAttribute="top" secondItem="6Zr-MO-EXa" secondAttribute="bottom" constant="20" id="WU0-4i-kUm"/>
                 <constraint firstItem="QQV-De-Do4" firstAttribute="leading" secondItem="Pma-aW-dmp" secondAttribute="leading" constant="20" id="WVs-zK-ped"/>
                 <constraint firstItem="X2P-1U-dti" firstAttribute="leading" secondItem="Pma-aW-dmp" secondAttribute="leading" constant="20" id="bDQ-5k-NJC"/>
                 <constraint firstItem="IhL-kp-VlK" firstAttribute="top" secondItem="X2P-1U-dti" secondAttribute="bottom" constant="8" id="hY6-X1-FEE"/>
                 <constraint firstAttribute="trailing" secondItem="hsW-0l-s3T" secondAttribute="trailing" constant="20" id="muc-GQ-bdq"/>
+                <constraint firstItem="7mW-v8-mf3" firstAttribute="leading" secondItem="Pma-aW-dmp" secondAttribute="leading" constant="10" id="ndN-cw-tQJ"/>
+                <constraint firstAttribute="bottom" secondItem="7mW-v8-mf3" secondAttribute="bottom" constant="20" symbolic="YES" id="rL2-zv-GUR"/>
+                <constraint firstAttribute="trailing" secondItem="7mW-v8-mf3" secondAttribute="trailing" constant="10" id="thd-0a-cha"/>
                 <constraint firstItem="QQV-De-Do4" firstAttribute="top" secondItem="Pma-aW-dmp" secondAttribute="top" constant="20" id="vL2-JQ-mcs"/>
                 <constraint firstAttribute="trailing" secondItem="6Zr-MO-EXa" secondAttribute="trailing" constant="20" id="wrg-rn-8lO"/>
             </constraints>
-            <point key="canvasLocation" x="-167.5" y="-165"/>
+            <point key="canvasLocation" x="-167.5" y="-68"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="Y9f-BT-b4y"/>
     </objects>

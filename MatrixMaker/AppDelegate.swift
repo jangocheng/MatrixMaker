@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	// MARK - Actions
 	
 	@IBAction func displayNewWindow(send: NSMenuItem) {
+		
 		addWindowController()
 	}
 	
